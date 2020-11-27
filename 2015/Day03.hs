@@ -36,11 +36,11 @@ type Direction = Char
 
 -- | Part One.
 --
--- >>> solve1 $ parseDirection <$> ">"
+-- >>> solve1 ">"
 -- 2
--- >>> solve1 $ parseDirection <$> "^>v<"
+-- >>> solve1 "^>v<"
 -- 4
--- >>> solve1 $ parseDirection <$> "^v^v^v^v^v"
+-- >>> solve1 "^v^v^v^v^v"
 -- 2
 solve1 :: [Direction] -> Int
 solve1 = length . allVisited
@@ -79,7 +79,7 @@ move = \case
 --
 -- This year, how many houses receive at least one present?
 --
--- >>> solve2 $ parseDirection <$> "^v^v^v^v^v"
+-- >>> solve2 "^v^v^v^v^v"
 -- 11
 solve2 :: [Direction] -> Int
 solve2 ds = length $ unions $ allVisited <$> [s, r]
