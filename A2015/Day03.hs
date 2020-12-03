@@ -22,13 +22,10 @@ module Day03 where
 import Control.Arrow (first, second)
 import Data.Maybe (fromJust)
 import Data.Set (Set, insert, singleton, unions)
+import Solution
 
--- | Process input text file.
-main :: IO ()
-main = do
-  input <- readFile "input03.txt"
-  print (solve1 input)
-  print (solve2 input)
+solution :: Solution String [Direction]
+solution = setPart1 solve1 . setPart2 solve2 $ emptySolution
 
 type House = (Int, Int)
 

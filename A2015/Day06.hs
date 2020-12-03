@@ -26,6 +26,16 @@
 -- by doing the instructions Santa sent you in order.
 module Day06 where
 
+import Solution
+
+solution :: Solution String [Instruction]
+solution =
+  let readFrom = readFile
+      parse = map instruction . lines
+      solution1 = print . solve1
+      solution2 = print . solve2
+   in Solution {..}
+
 type P = (Int, Int)
 
 data Instruction = On P P | Off P P | Toggle P P deriving (Eq, Show)
@@ -34,15 +44,6 @@ get :: Instruction -> (P, P)
 get (On l r) = (l, r)
 get (Off l r) = (l, r)
 get (Toggle l r) = (l, r)
-
--- | Process input text file.
-main :: IO ()
-main = do
-  input <- lines <$> readFile "input06.txt"
-  let instructions = map instruction input
-  -- mapM_ print instructions
-  print (solve1 instructions)
-  print (solve2 instructions)
 
 -- | Part One.
 --

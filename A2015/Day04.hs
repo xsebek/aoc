@@ -20,15 +20,18 @@
 -- 000006136ef2ff3b291c85725f17325c
 module Day04 where
 
-import Data.ByteString.Lazy.Char8 (pack)
+import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString.Lazy.Char8 as BC
 import Data.Digest.Pure.MD5 (md5)
+import Solution
 
--- | Process input text file.
-main :: IO ()
-main = do
-  input <- head . lines <$> readFile "input04.txt"
-  putStrLn (solve1 input)
-  putStrLn (solve2 input)
+solution :: Solution B.ByteString B.ByteString
+solution =
+  let readFrom = B.readFile
+      parse = head . BC.words
+      solution1 = BC.putStrLn . solve1
+      solution2 = BC.putStrLn . solve2
+   in Solution {..}
 
 -- | Part One.
 --
@@ -36,25 +39,25 @@ main = do
 -- "abcdef609043"
 -- >>> solve1 "pqrstuv"
 -- "abcdef609043"
-solve1 :: String -> String
+solve1 :: B.ByteString -> B.ByteString
 solve1 = coinByPredicate (\s -> "00000" == take 5 (hash s))
 
-coinByPredicate :: (String -> Bool) -> String -> String
+coinByPredicate :: (B.ByteString -> Bool) -> B.ByteString -> B.ByteString
 coinByPredicate p secret = head $ filter p $ m <$> [0 ..]
   where
-    m i = secret ++ show i
+    m i = secret <> BC.pack (show i)
 
 -- | Get the MD5 hash of input String.
 --
 -- >>> hash "pqrstuv1048970"
 -- "000006136ef2ff3b291c85725f17325c"
-hash :: String -> String
-hash = show . md5 . pack
+hash :: B.ByteString -> String
+hash = show . md5
 
 -- | Part Two.
 --
 -- Now find one that starts with six zeroes.
 --
 -- _This is quite slow, but still finishes in less then a minute._
-solve2 :: String -> String
+solve2 :: B.ByteString -> B.ByteString
 solve2 = coinByPredicate (\s -> "000000" == take 6 (hash s))

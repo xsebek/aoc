@@ -21,13 +21,10 @@
 module Day01 where
 
 import Control.Monad (foldM)
+import Solution
 
--- | Process input text file.
-main :: IO ()
-main = do
-  input <- readFile "input01.txt"
-  print (solve1 input)
-  print (solve2 input)
+solution :: Solution String String
+solution = setPart1 solve1 . setPart2 solve2 $ emptySolution
 
 -- | Solve first task.
 --

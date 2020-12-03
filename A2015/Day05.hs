@@ -14,6 +14,16 @@
 --    of one of the other requirements.
 module Day05 where
 
+import Solution
+
+solution :: Solution String [String]
+solution =
+  let readFrom = readFile
+      parse = lines
+      solution1 = print . solve1
+      solution2 = print . solve2
+   in Solution {..}
+
 -- | Process input text file.
 main :: IO ()
 main = do

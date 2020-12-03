@@ -17,13 +17,15 @@
 module Day02 where
 
 import Data.List (sort, unfoldr)
+import Solution
 
--- | Process input text file.
-main :: IO ()
-main = do
-  input <- readFile "input02.txt"
-  print (sum $ map solve1 $ lines input)
-  print (sum $ map solve2 $ lines input)
+solution :: Solution String [String]
+solution =
+  let readFrom = readFile
+      parse = lines
+      solution1 = print . sum . map solve1
+      solution2 = print . sum . map solve2
+   in Solution {..}
 
 type Box = (Int, Int, Int)
 

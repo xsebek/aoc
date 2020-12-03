@@ -21,7 +21,34 @@ library A2015
       Day04
       Day05
       Day06
+      Solution
   hs-source-dirs: A2015
-  default-extensions: OverloadedStrings, LambdaCase
+  default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
   build-depends: base, containers, bytestring, pureMD5
   default-language: Haskell2010
+
+
+executable aoc2015
+  main-is: Main.hs
+  build-depends: base, containers, bytestring, pureMD5, A2015
+  default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
+  hs-source-dirs: A2015
+  default-language: Haskell2010
+
+executable aoc20d01
+  main-is:           Day01.hs
+  build-depends:     base
+  hs-source-dirs:    A2020
+  default-language:  Haskell2010
+
+executable aoc20d02
+  main-is:           Day02.hs
+  build-depends:     base, megaparsec, text, optics
+  hs-source-dirs:    A2020
+  default-language:  Haskell2010
+
+executable aoc20d03
+  main-is:           Day03.hs
+  build-depends:     base
+  hs-source-dirs:    A2020
+  default-language:  Haskell2010
