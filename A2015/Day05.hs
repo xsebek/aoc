@@ -39,7 +39,9 @@ solve1 = length . filter allp
 -- >>> atLeast3Vowels "dvszwmarrgswjxmb" -- only a
 -- False
 atLeast3Vowels :: String -> Bool
-atLeast3Vowels = not . null . drop 2 . filter (`elem` "aeiou")
+atLeast3Vowels = not . null . drop 2 . filter (`elem` vowels)
+  where
+    vowels = "aeiou" :: String
 
 -- | Property 2.
 --
