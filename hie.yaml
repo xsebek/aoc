@@ -1,0 +1,10 @@
+cradle:
+  cabal:
+    - path: "./A2015"
+      component: "A2015"
+    - path: "./A2015"
+      component: "aoc2015"
+    - path: "./A2020"
+      component: "A2020"
+    - path: "./A2020/Main.hs"
+      component: "aoc2020"
