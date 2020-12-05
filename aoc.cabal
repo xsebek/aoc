@@ -23,8 +23,8 @@ library A2015
       Day06
       Solution
   hs-source-dirs: A2015
-  default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
   build-depends: base, containers, bytestring, pureMD5
+  default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
   default-language: Haskell2010
 
 executable aoc2015
@@ -40,10 +40,11 @@ library A2020
       Day02
       Day03
       Day04
+      Day05
       Solution
   hs-source-dirs: A2020
-  default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
   build-depends: base, containers, bytestring, megaparsec, text, optics
+  default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
   default-language: Haskell2010
 
 executable aoc2020
