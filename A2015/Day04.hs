@@ -38,7 +38,7 @@ solution =
 -- >>> solve1 "abcdef"
 -- "abcdef609043"
 -- >>> solve1 "pqrstuv"
--- "abcdef609043"
+-- "pqrstuv1048970"
 solve1 :: B.ByteString -> B.ByteString
 solve1 = coinByPredicate (\s -> "00000" == take 5 (hash s))
 
