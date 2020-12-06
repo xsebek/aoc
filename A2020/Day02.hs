@@ -9,8 +9,8 @@ import Text.Megaparsec hiding (State)
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
-solution :: Solve [Password]
-solution = solveG (parseFile passwords) solve1 solve2
+solution :: Solution [Password]
+solution = solutionG (parseFile passwords) solve1 solve2
 
 type Parser = Parsec Void Text
 

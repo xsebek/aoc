@@ -29,8 +29,9 @@ main =
     help = "Please select day 01-25."
     sToFun s = find ((s ==) . fst) $ zip ds solutions
 
+solutions :: [IO ()]
 solutions =
-  let as = adventSolve
+  let as = flip adventSolve
    in [ as D01.solution,
         as D02.solution,
         as D03.solution,

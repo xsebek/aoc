@@ -2,8 +2,8 @@ module Day01 where
 
 import Solution
 
-solution :: Solve [Int]
-solution = solve (map read . lines) solve1 solve2
+solution :: Solution [Int]
+solution = solutionS (map read . lines) solve1 solve2
 
 ix :: [a] -> [(Int, a)]
 ix = zip [0 ..]

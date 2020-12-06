@@ -74,8 +74,8 @@ import Solution
 -- > #.##...#...#.##...#...#.X#...#...
 -- > #...##....##...##....##...#X....#
 -- > .#..#...#.#.#..#...#.#.#..#...X.#  --->
-solution :: Solve Forest
-solution = solve toForest solve1 solve2
+solution :: Solution Forest
+solution = solutionS toForest solve1 solve2
 
 type Tree = Bool
 

@@ -14,8 +14,8 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 type Parser = Parsec Void String
 
-solution :: Solve [[(String, String)]]
-solution = solveG (fmap parsing . TIO.readFile) solve1 solve2
+solution :: Solution [[(String, String)]]
+solution = solutionG (fmap parsing . TIO.readFile) solve1 solve2
 
 parsing :: Text -> [[(String, String)]]
 parsing = fmap (block . unpack) . splitOn "\n\n"
@@ -30,7 +30,6 @@ keyPair = do
   value <- some $ satisfy (not . isSpace)
   return (key, value)
 
-
 keys :: S.Set String
 keys = S.fromList ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" {-, "cid"-}]
 
@@ -39,7 +38,6 @@ solve1 = length . filter hasKeys
 
 hasKeys :: [(String, b)] -> Bool
 hasKeys l = keys `S.isSubsetOf` S.fromList (map fst l)
-
 
 solve2 :: [[(String, String)]] -> Int
 solve2 = length . filter (all $ uncurry check) . filter hasKeys

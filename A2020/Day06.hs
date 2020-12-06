@@ -1,6 +1,5 @@
 module Day06 where
 
-import Control.Monad ((>=>))
 import Data.Set (Set, intersection)
 import qualified Data.Set as Set
 import Data.Text (Text, splitOn)
@@ -8,8 +7,8 @@ import qualified Data.Text as Text
 import qualified Data.Text.IO as TextIO
 import Solution
 
-solution :: Solve [[Text]]
-solution = solveG (TextIO.readFile >=> pure . parse) solve1 solve2
+solution :: Solution [[Text]]
+solution = solutionG (fmap parse . TextIO.readFile) solve1 solve2
 
 -- >>> parse example
 -- [["abc"],["a","b","c"],["ab","ac"],["a","a","a","a"],["b"]]

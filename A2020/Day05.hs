@@ -10,8 +10,8 @@ import Solution
 
 type Bits = [Int]
 
-solution :: Solve [(Bits, Bits)]
-solution = solve parse solve1 solve2
+solution :: Solution [(Bits, Bits)]
+solution = solutionS parse solve1 solve2
 
 parse :: String -> [(Bits, Bits)]
 parse = map (bimap (map fb) (map lr) . break (`elem` ['L', 'R'])) . words
