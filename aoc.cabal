@@ -41,6 +41,7 @@ library A2020
       Day03
       Day04
       Day05
+      Day06
       Solution
   hs-source-dirs: A2020
   build-depends: base, containers, bytestring, megaparsec, text, optics

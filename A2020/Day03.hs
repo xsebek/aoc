@@ -5,7 +5,6 @@ module Day03 where
 
 import Control.Monad ((>=>))
 import Data.Bool (bool)
-import Data.Function ((&))
 import Data.List (intercalate)
 import Data.Maybe (catMaybes, isJust, listToMaybe)
 import Solution
