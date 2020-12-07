@@ -1,9 +1,10 @@
 module Day01 where
 
-import Solution
-
-solution :: Solution [Int]
-solution = solutionS (map read . lines) solve1 solve2
+main01 :: FilePath -> IO ()
+main01 f = do
+  input <- map read . lines <$> readFile f
+  print $ solve1 input
+  print $ solve2 input
 
 ix :: [a] -> [(Int, a)]
 ix = zip [0 ..]

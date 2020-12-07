@@ -36,13 +36,14 @@ executable aoc2015
 
 library A2020
   exposed-modules:
+      Advent2020
       Day01
       Day02
       Day03
       Day04
       Day05
       Day06
-      Solution
+      Day07
   hs-source-dirs: A2020
   build-depends: base, containers, bytestring, megaparsec, text, optics
   default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
@@ -50,7 +51,16 @@ library A2020
 
 executable aoc2020
   main-is: Main.hs
-  build-depends: base, containers, bytestring, megaparsec, text, optics, A2020
+  build-depends: base, containers, bytestring, megaparsec, text, optics
+  other-modules:
+      Advent2020
+      Day01
+      Day02
+      Day03
+      Day04
+      Day05
+      Day06
+      Day07
   default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
   hs-source-dirs: A2020
   default-language: Haskell2010

@@ -4,13 +4,15 @@ import Data.Maybe (listToMaybe)
 import Data.Text (Text)
 import qualified Data.Text.IO as T
 import Data.Void (Void)
-import Solution
 import Text.Megaparsec hiding (State)
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
-solution :: Solution [Password]
-solution = solutionG (parseFile passwords) solve1 solve2
+main02 :: FilePath -> IO ()
+main02 f = do
+  input <- parseFile passwords f
+  print $ solve1 input
+  print $ solve2 input
 
 type Parser = Parsec Void Text
 

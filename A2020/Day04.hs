@@ -7,15 +7,17 @@ import qualified Data.Set as S
 import Data.Text (Text, intercalate, splitOn, unpack)
 import qualified Data.Text.IO as TIO
 import Data.Void (Void)
-import Solution
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
 
-type Parser = Parsec Void String
+main04 :: FilePath -> IO ()
+main04 f = do
+  input <- parsing <$> TIO.readFile f
+  print $ solve1 input
+  print $ solve2 input
 
-solution :: Solution [[(String, String)]]
-solution = solutionG (fmap parsing . TIO.readFile) solve1 solve2
+type Parser = Parsec Void String
 
 parsing :: Text -> [[(String, String)]]
 parsing = fmap (block . unpack) . splitOn "\n\n"

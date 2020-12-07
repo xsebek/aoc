@@ -1,16 +1,10 @@
 module Main where
 
+import Advent2020
 import Control.Monad (forM_)
-import Data.Bool (bool)
+import Data.Function ((&))
 import Data.List (find)
-import Data.Maybe (fromJust)
-import qualified Day01 as D01
-import qualified Day02 as D02
-import qualified Day03 as D03
-import qualified Day04 as D04
-import qualified Day05 as D05
-import qualified Day06 as D06
-import Solution
+import Data.Maybe (fromMaybe)
 import System.Environment (getArgs)
 
 main :: IO ()
@@ -21,24 +15,31 @@ main =
       then fail help
       else forM_ arg $ \case
         "-h" -> putStrLn help
-        s
-          | s `elem` ds -> let x = fromJust (sToFun s) in snd x (fst x)
-          | otherwise -> fail ("Could not parse day " <> s <> "! " <> help)
+        day -> failMessage day `fromMaybe` findMain day
   where
-    ds = days 6
+    ds = zip days solutionsM
     help = "Please select day 01-25."
-    sToFun s = find ((s ==) . fst) $ zip ds solutions
+    failMessage day = fail $ "Could not parse day " <> day <> "! " <> help
+    findMain day = snd <$> find ((== day) . fst) ds
 
-solutions :: [IO ()]
-solutions =
-  let as = flip adventSolve
-   in [ as D01.solution,
-        as D02.solution,
-        as D03.solution,
-        as D04.solution,
-        as D05.solution,
-        as D06.solution
-      ]
+solutionsM :: [IO ()]
+solutionsM =
+  apply
+    [ main01,
+      main02,
+      main03,
+      main04,
+      main05,
+      main06,
+      main07
+    ]
+  where
+    apply = zipWith (&) paths
+    paths = map (\day -> "input/2020/" <> day <> ".txt") days
 
-days :: Int -> [String]
-days m = map (\d -> bool id ('0' :) (d < 10) $ show d) [1 .. m]
+-- | Day strings formatted as %02d.
+--
+-- >>> take 12 days
+-- ["01","02","03","04","05","06","07","08","09","10","11","12"]
+days :: [String]
+days = map (\d -> (if d < 10 then ('0' :) else id) (show d)) [1 ..]

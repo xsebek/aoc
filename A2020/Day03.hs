@@ -7,7 +7,6 @@ import Control.Monad ((>=>))
 import Data.Bool (bool)
 import Data.List (intercalate)
 import Data.Maybe (catMaybes, isJust, listToMaybe)
-import Solution
 
 -- | Solution to day 3.
 --
@@ -74,8 +73,11 @@ import Solution
 -- > #.##...#...#.##...#...#.X#...#...
 -- > #...##....##...##....##...#X....#
 -- > .#..#...#.#.#..#...#.#.#..#...X.#  --->
-solution :: Solution Forest
-solution = solutionS toForest solve1 solve2
+main03 :: FilePath -> IO ()
+main03 f = do
+  input <- toForest <$> readFile f
+  print $ solve1 input
+  print $ solve2 input
 
 type Tree = Bool
 
