@@ -46,6 +46,7 @@ library A2020
       Day07
       Day08
       Day09
+      Day10
   hs-source-dirs: A2020
   build-depends: base, containers, bytestring, megaparsec, text, optics, vector, criterion
   default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
