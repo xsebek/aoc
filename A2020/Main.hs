@@ -34,7 +34,8 @@ solutionsM =
       main07,
       main08,
       main09,
-      main10
+      main10,
+      main11
     ]
   where
     apply = zipWith (&) paths

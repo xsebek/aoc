@@ -9,7 +9,7 @@ module Day10 where
 import Data.List (foldl', sort)
 import Optics
 
--- | Solution to Day 9.
+-- | Solution to Day 10.
 main10 :: FilePath -> IO ()
 main10 f = do
   input <- parse <$> readFile f
