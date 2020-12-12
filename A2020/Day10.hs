@@ -7,7 +7,7 @@
 module Day10 where
 
 import Data.List (foldl', sort)
-import Optics
+import Optics.Core
 
 -- | Solution to Day 10.
 main10 :: FilePath -> IO ()
