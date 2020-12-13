@@ -15,20 +15,28 @@ extra-source-files:  README.md
 
 library A2015
   exposed-modules:
-      Day01
-      Day02
-      Day03
-      Day04
-      Day05
-      Day06
-      Solution
+    Day01
+    Day02
+    Day03
+    Day04
+    Day05
+    Day06
+    Solution
   hs-source-dirs: A2015
   build-depends: base, containers, bytestring, pureMD5
-  default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
+  default-extensions: LambdaCase, RecordWildCards
   default-language: Haskell2010
 
 executable aoc2015
   main-is: Main.hs
+  other-modules:
+    Day01
+    Day02
+    Day03
+    Day04
+    Day05
+    Day06
+    Solution
   build-depends: base, containers, bytestring, pureMD5, A2015
   default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
   hs-source-dirs: A2015
@@ -36,22 +44,52 @@ executable aoc2015
 
 library A2020
   exposed-modules:
-      Advent2020
-      Day01
-      Day02
-      Day03
-      Day04
-      Day05
-      Day06
-      Day07
-      Day08
-      Day09
-      Day10
-      Day11
-      Day12
+    Advent2020
+    Day01
+    Day02
+    Day03
+    Day04
+    Day05
+    Day06
+    Day07
+    Day08
+    Day09
+    Day10
+    Day11
+    Day12
+    Day13
   hs-source-dirs: A2020
+  -- defaults - I will try to learn them after having them :)
+  -- anything that I actually use will have to be copied to exec
+  default-extensions:
+    -- trivial
+    FlexibleContexts
+    FlexibleInstances
+    MultiParamTypeClasses
+    -- nice
+    BangPatterns
+    LambdaCase
+    MultiWayIf
+    NamedFieldPuns
+    RecordWildCards
+    TupleSections
+    -- derive anything
+    DeriveFoldable
+    DeriveFunctor
+    DeriveGeneric
+    DeriveLift
+    DeriveTraversable
+    DerivingStrategies
+    GeneralizedNewtypeDeriving
+    StandaloneDeriving
+    -- types
+    OverloadedStrings
+    ScopedTypeVariables
+    TypeApplications
+    TypeFamilies
+    -- GHCi in lib only :)
+    NoMonomorphismRestriction
   build-depends: base, containers, bytestring, megaparsec, text, optics-core, vector, criterion
-  default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
   default-language: Haskell2010
 
 executable aoc2020
@@ -71,6 +109,13 @@ executable aoc2020
       Day10
       Day11
       Day12
+      Day13
   default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
   hs-source-dirs: A2020
   default-language: Haskell2010
+  ghc-options:
+    -Wall
+    -Wcompat
+    -Wincomplete-record-updates
+    -Wredundant-constraints
+    -Wincomplete-record-updates
