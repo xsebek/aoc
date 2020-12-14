@@ -12,6 +12,7 @@ module Advent2020
     D11.main11,
     D12.main12,
     D13.main13,
+    D14.main14,
   )
 where
 
@@ -28,3 +29,4 @@ import qualified Day10 as D10
 import qualified Day11 as D11
 import qualified Day12 as D12
 import qualified Day13 as D13
+import qualified Day14 as D14
