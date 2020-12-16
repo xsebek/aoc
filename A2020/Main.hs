@@ -39,7 +39,8 @@ solutionsM =
       main12,
       main13,
       main14,
-      main15
+      main15,
+      main16
     ]
   where
     apply = zipWith (&) paths
@@ -50,4 +51,4 @@ solutionsM =
 -- >>> take 12 days
 -- ["01","02","03","04","05","06","07","08","09","10","11","12"]
 days :: [String]
-days = map (\d -> (if d < 10 then ('0' :) else id) (show d)) [1 ..]
+days = map (\d -> (if d < (10 :: Int) then ('0' :) else id) (show d)) [1 ..]

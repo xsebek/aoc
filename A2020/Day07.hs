@@ -149,8 +149,8 @@ containColor col m = go (Set.singleton col) (filterEmpty m)
         else (Set.singleton k, Nothing) -- put in result and remove
         -- 3. and 4.
     go :: Colors -> BagMap -> Colors
-    go s m =
-      let (ns, nm) = traverseMaybeWithKey (takeInter s) m
+    go s bm =
+      let (ns, nm) = traverseMaybeWithKey (takeInter s) bm
        in if null ns then ns else ns `Set.union` go ns nm
 
 bagsMap :: [Bag] -> BagMap
