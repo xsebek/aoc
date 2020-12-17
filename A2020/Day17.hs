@@ -13,9 +13,15 @@ import qualified Data.Set as S
 
 type P2 = (Int, Int)
 
-data P3 = P3 {z3 :: Int, y3 :: Int, x3 :: Int} deriving (Eq, Ord, Show)
+-- | Point in three/four dimensional space - `x0` added last.
+data P4 = P4 {x0 :: Int, x1 :: Int, x2 :: Int, x3 :: Int} deriving (Eq, Ord, Show)
 
-type Pocket = M.Map P3 ()
+type P3 = P4
+
+p3 :: Int -> Int -> Int -> P3
+p3 = P4 0
+
+type Pocket = M.Map P4 ()
 
 -- | Solution to Day 17.
 main17 :: FilePath -> IO ()
@@ -38,7 +44,7 @@ parse = M.fromList . map toP3 . parseLayer . lines
     isActive :: Int -> Int -> Char -> Maybe P2
     isActive i j c = if c == '.' then Nothing else Just (i, j)
     toP3 :: P2 -> (P3, ())
-    toP3 = (,()) . uncurry (P3 0)
+    toP3 = (,()) . uncurry (p3 0)
 
 --------------------------------------------------------------------
 --                            PART1                               --
@@ -52,30 +58,27 @@ solve1 = length . snd . last . cubeCycles 6
 pm :: Int -> [Int]
 pm x = [pred x .. succ x]
 
--- | The cube and cubes in distance 1.
+-- | The cube and cubes in distance 1 in ascending order.
 --
--- >>> length $ neighborhood (P3 0 0 0)
+-- >>> length $ neighbourhood3 (p3 0 0 0)
 -- 27
---
--- This is an ascending list:
---
--- >>> let n = neighborhood (P3 0 0 0) in and $ zipWith (<) n (tail n)
+-- >>> let n = neighbourhood3 (p3 0 0 0) in and $ zipWith (<) n (tail n)
 -- True
-neighborhood :: P3 -> [P3]
-neighborhood P3 {..} = P3 <$> pm z3 <*> pm y3 <*> pm x3
+neighbourhood3 :: P3 -> [P3]
+neighbourhood3 P4 {..} = p3 <$> pm x1 <*> pm x2 <*> pm x3
 
-neightbors :: P3 -> [P3]
-neightbors p = filter (/= p) $ neighborhood p
+neighbour3 :: P3 -> [P3]
+neighbour3 p = filter (/= p) $ neighbourhood3 p
 
-changeSpace :: Pocket -> S.Set P3
-changeSpace = S.unions . map (S.fromDistinctAscList . neighborhood) . M.keys
+changingCubes :: Pocket -> S.Set P3
+changingCubes = S.unions . map (S.fromDistinctAscList . neighbourhood3) . M.keys
 
-changeState :: Pocket -> P3 -> Maybe P3
-changeState p p3 = bToM state
+changeState3 :: Pocket -> P3 -> Maybe P3
+changeState3 poc p = bToM state
   where
-    bToM b = if b then Just p3 else Nothing
-    n = length . mapMaybe (p M.!?) $ neightbors p3
-    state = case p M.!? p3 of
+    bToM b = if b then Just p else Nothing
+    n = length . mapMaybe (poc M.!?) $ neighbour3 p
+    state = case poc M.!? p of
       Nothing -> n == 3
       Just () -> n == 3 || n == 2
 
@@ -83,7 +86,7 @@ cubesChange :: Pocket -> Pocket
 cubesChange p = M.fromDistinctAscList . flip zip (repeat ()) $ next
   where
     next :: [P3]
-    next = mapMaybe (changeState p) (S.elems $ changeSpace p)
+    next = mapMaybe (changeState3 p) (S.elems $ changingCubes p)
 
 cubeCycles :: Int -> Pocket -> [(Int, Pocket)]
 cubeCycles n = zip [0 .. n] . iterate' cubesChange
@@ -92,9 +95,41 @@ cubeCycles n = zip [0 .. n] . iterate' cubesChange
 --                            PART2                               --
 --------------------------------------------------------------------
 
--- >>> solve2 example
-solve2 :: a -> Int
-solve2 = undefined
+-- >>> solve2 $ parse example
+-- 848
+solve2 :: Pocket -> Int
+solve2 = length . snd . last . tesseractCycles 6
+
+-- | The cube and cubes in distance 1.
+--
+-- >>> length $ neighbourhood4 (P4 0 0 0 0)
+-- 81
+neighbourhood4 :: P4 -> [P4]
+neighbourhood4 P4 {..} = P4 <$> pm x0 <*> pm x1 <*> pm x2 <*> pm x3
+
+neighbour4 :: P3 -> [P3]
+neighbour4 p = filter (/= p) $ neighbourhood4 p
+
+changeSpace4 :: Pocket -> S.Set P4
+changeSpace4 = S.unions . map (S.fromDistinctAscList . neighbourhood4) . M.keys
+
+changeState4 :: Pocket -> P4 -> Maybe P4
+changeState4 poc p = bToM state
+  where
+    bToM b = if b then Just p else Nothing
+    n = length . mapMaybe (poc M.!?) $ neighbour4 p
+    state = case poc M.!? p of
+      Nothing -> n == 3
+      Just () -> n == 3 || n == 2
+
+tesseractChange :: Pocket -> Pocket
+tesseractChange p = M.fromDistinctAscList . flip zip (repeat ()) $ next
+  where
+    next :: [P4]
+    next = mapMaybe (changeState4 p) (S.elems $ changeSpace4 p)
+
+tesseractCycles :: Int -> Pocket -> [(Int, Pocket)]
+tesseractCycles n = zip [0 .. n] . iterate' tesseractChange
 
 --------------------------------------------------------------------
 --                            DEBUG                               --
@@ -114,8 +149,8 @@ pocketSize :: Pocket -> (P2, P2, P2)
 pocketSize = foldl' minMax3 (ze, ze, ze) . M.keys
   where
     ze = (0, 0)
-    minMax3 :: (P2, P2, P2) -> P3 -> (P2, P2, P2)
-    minMax3 (mz, my, mx) (P3 z y x) = (,,) (m mz z) (m my y) (m mx x)
+    minMax3 :: (P2, P2, P2) -> P4 -> (P2, P2, P2)
+    minMax3 (mz, my, mx) P4 {..} = (,,) (m mz x3) (m my x2) (m mx x1)
     m :: P2 -> Int -> P2
     m (mi, ma) i = (,) (min mi i) (max ma i)
 
@@ -126,11 +161,12 @@ printPocket p = mapM_ printLayer [zmin .. zmax]
     printLayer i = putStr "z=" >> print i >> putStr (showLayer p i my mx) >> putStrLn ""
 
 showLayer :: Pocket -> Int -> P2 -> P2 -> String
-showLayer p z3 yr xr = unlines $ do
-  y3 <- range yr
+showLayer p x3 yr xr = unlines $ do
+  x2 <- range yr
   pure $ do
-    x3 <- range xr
-    pure $ mToC (M.lookup P3 {..} p)
+    x1 <- range xr
+    let x0 = 0
+    pure $ mToC (M.lookup P4 {..} p)
   where
     range (l, r) = [l .. r]
     mToC = maybe '.' (const '#')
