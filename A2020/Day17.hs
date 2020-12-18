@@ -68,28 +68,28 @@ neighbourhood3 :: P3 -> [P3]
 neighbourhood3 P4 {..} = p3 <$> pm x1 <*> pm x2 <*> pm x3
 
 neighbour3 :: P3 -> [P3]
-neighbour3 p = filter (/= p) $ neighbourhood3 p
+neighbour3 !p = filter (/= p) $ neighbourhood3 p
 
 changingCubes :: Pocket -> S.Set P3
 changingCubes = S.unions . map (S.fromDistinctAscList . neighbourhood3) . M.keys
 
 changeState3 :: Pocket -> P3 -> Maybe P3
-changeState3 poc p = bToM state
+changeState3 !poc !p = bToM state
   where
     bToM b = if b then Just p else Nothing
-    n = length . mapMaybe (poc M.!?) $ neighbour3 p
+    !n = length . mapMaybe (poc M.!?) $ neighbour3 p
     state = case poc M.!? p of
       Nothing -> n == 3
       Just () -> n == 3 || n == 2
 
 cubesChange :: Pocket -> Pocket
-cubesChange p = M.fromDistinctAscList . flip zip (repeat ()) $ next
+cubesChange !p = M.fromDistinctAscList . flip zip (repeat ()) $ next
   where
     next :: [P3]
     next = mapMaybe (changeState3 p) (S.elems $ changingCubes p)
 
 cubeCycles :: Int -> Pocket -> [(Int, Pocket)]
-cubeCycles n = zip [0 .. n] . iterate' cubesChange
+cubeCycles !n = zip [0 .. n] . iterate' cubesChange
 
 --------------------------------------------------------------------
 --                            PART2                               --
@@ -108,28 +108,28 @@ neighbourhood4 :: P4 -> [P4]
 neighbourhood4 P4 {..} = P4 <$> pm x0 <*> pm x1 <*> pm x2 <*> pm x3
 
 neighbour4 :: P3 -> [P3]
-neighbour4 p = filter (/= p) $ neighbourhood4 p
+neighbour4 !p = filter (/= p) $ neighbourhood4 p
 
 changeSpace4 :: Pocket -> S.Set P4
 changeSpace4 = S.unions . map (S.fromDistinctAscList . neighbourhood4) . M.keys
 
 changeState4 :: Pocket -> P4 -> Maybe P4
-changeState4 poc p = bToM state
+changeState4 !poc !p = bToM state
   where
-    bToM b = if b then Just p else Nothing
-    n = length . mapMaybe (poc M.!?) $ neighbour4 p
-    state = case poc M.!? p of
+    bToM !b = if b then Just p else Nothing
+    !n = length . mapMaybe (poc M.!?) $ neighbour4 p
+    !state = case poc M.!? p of
       Nothing -> n == 3
       Just () -> n == 3 || n == 2
 
 tesseractChange :: Pocket -> Pocket
-tesseractChange p = M.fromDistinctAscList . flip zip (repeat ()) $ next
+tesseractChange !p = M.fromDistinctAscList . flip zip (repeat ()) $ next
   where
     next :: [P4]
     next = mapMaybe (changeState4 p) (S.elems $ changeSpace4 p)
 
 tesseractCycles :: Int -> Pocket -> [(Int, Pocket)]
-tesseractCycles n = zip [0 .. n] . iterate' tesseractChange
+tesseractCycles !n = zip [0 .. n] . iterate' tesseractChange
 
 --------------------------------------------------------------------
 --                            DEBUG                               --
@@ -145,34 +145,37 @@ example =
 
 -- >>> pocketSize $ parse example
 -- ((0,0),(0,2),(0,2))
-pocketSize :: Pocket -> (P2, P2, P2)
-pocketSize = foldl' minMax3 (ze, ze, ze) . M.keys
+pocketSize :: Pocket -> (P2, P2, P2, P2)
+pocketSize = foldl' minMax3 (ze, ze, ze, ze) . M.keys
   where
     ze = (0, 0)
-    minMax3 :: (P2, P2, P2) -> P4 -> (P2, P2, P2)
-    minMax3 (mz, my, mx) P4 {..} = (,,) (m mz x3) (m my x2) (m mx x1)
+    minMax3 :: (P2, P2, P2, P2) -> P4 -> (P2, P2, P2, P2)
+    minMax3 (m0, m1, m2, m3) P4 {..} = (,,,) (m m0 x0) (m m1 x1) (m m2 x2) (m m3 x3)
     m :: P2 -> Int -> P2
     m (mi, ma) i = (,) (min mi i) (max ma i)
 
 printPocket :: Pocket -> IO ()
-printPocket p = mapM_ printLayer [zmin .. zmax]
+printPocket p = mapM_ printLayer ((,) <$> range mw <*> range mz)
   where
-    ((zmin, zmax), mx, my) = pocketSize p
-    printLayer i = putStr "z=" >> print i >> putStr (showLayer p i my mx) >> putStrLn ""
+    (mw, mz, my, mx) = pocketSize p
+    printLayer (w, z) = do
+      putStrLn $ "\nz=" <> show z <> ", w=" <> show w
+      putStr (showLayer p w z my mx)
 
-showLayer :: Pocket -> Int -> P2 -> P2 -> String
-showLayer p x3 yr xr = unlines $ do
+showLayer :: Pocket -> Int -> Int -> P2 -> P2 -> String
+showLayer p x0 x1 yr xr = unlines $ do
   x2 <- range yr
   pure $ do
-    x1 <- range xr
-    let x0 = 0
+    x3 <- range xr
     pure $ mToC (M.lookup P4 {..} p)
   where
-    range (l, r) = [l .. r]
     mToC = maybe '.' (const '#')
 
-showGenerations :: Int -> Pocket -> IO ()
-showGenerations n = mapM_ printer . cubeCycles n
+range :: Enum a => (a, a) -> [a]
+range (l, r) = [l .. r]
+
+showCycles :: (Int -> Pocket -> [(Int, Pocket)]) -> Int -> Pocket -> IO ()
+showCycles iter n = mapM_ printer . iter n
   where
     printer :: (Int, Pocket) -> IO ()
     printer (i, p) = header i >> printPocket p
