@@ -62,6 +62,7 @@ library A2020
     Day15
     Day16
     Day17
+    Day18
   hs-source-dirs: A2020
   -- defaults - I will try to learn them after having them :)
   -- anything that I actually use will have to be copied to exec
@@ -91,31 +92,38 @@ library A2020
     ScopedTypeVariables
     TypeApplications
     TypeFamilies
-  build-depends: base, containers, bytestring, megaparsec, text, optics-core, vector, criterion
+  build-depends:
+    base, containers, unordered-containers, vector,
+    bytestring, megaparsec, text,
+    optics-core, criterion
   default-language: Haskell2010
 
 executable aoc2020
   main-is: Main.hs
-  build-depends: base, containers, bytestring, megaparsec, text, optics-core, vector, criterion
+  build-depends:
+    base, containers, unordered-containers, vector,
+    bytestring, megaparsec, text,
+    optics-core, criterion
   other-modules:
-      Advent2020
-      Day01
-      Day02
-      Day03
-      Day04
-      Day05
-      Day06
-      Day07
-      Day08
-      Day09
-      Day10
-      Day11
-      Day12
-      Day13
-      Day14
-      Day15
-      Day16
-      Day17
+    Advent2020
+    Day01
+    Day02
+    Day03
+    Day04
+    Day05
+    Day06
+    Day07
+    Day08
+    Day09
+    Day10
+    Day11
+    Day12
+    Day13
+    Day14
+    Day15
+    Day16
+    Day17
+    Day18
   default-extensions:
     -- trivial
     FlexibleContexts
