@@ -38,3 +38,4 @@ import qualified Day15 as D15
 import qualified Day16 as D16
 import qualified Day17 as D17
 import qualified Day18 as D18
+import qualified Day19 as D19

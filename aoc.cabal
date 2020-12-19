@@ -63,6 +63,7 @@ library A2020
     Day16
     Day17
     Day18
+    Day19
   hs-source-dirs: A2020
   -- defaults - I will try to learn them after having them :)
   -- anything that I actually use will have to be copied to exec
@@ -124,6 +125,7 @@ executable aoc2020
     Day16
     Day17
     Day18
+    Day19
   default-extensions:
     -- trivial
     FlexibleContexts
