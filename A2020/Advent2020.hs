@@ -17,6 +17,7 @@ module Advent2020
     D16.main16,
     D17.main17,
     D18.main18,
+    D19.main19,
   )
 where
 
