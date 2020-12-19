@@ -25,6 +25,10 @@ main19 f = do
   print $ uncurry solve1 input
   print $ uncurry solve2 input
 
+--------------------------------------------------------------------
+--                            PARSE                               --
+--------------------------------------------------------------------
+
 type Parser = Parsec Void String
 
 -- >>> parse example
@@ -54,6 +58,10 @@ parseRule =
     singleChar :: Parser Rule
     singleChar = C <$> sp (char '"' *> anySingle <* char '"')
 
+--------------------------------------------------------------------
+--                            PART1                               --
+--------------------------------------------------------------------
+
 -- >>> solve1 exampleRules exampleStrings
 -- 2
 solve1 :: Rules -> [String] -> Int
@@ -79,9 +87,52 @@ checkSub rules r s = case r of
   L [] -> [s]
   L (l : ls) -> concatMap (checkSub rules (L ls)) (checkRule rules (rules Map.! l) s)
 
--- >>> solve2 example
+--------------------------------------------------------------------
+--                            PART2                               --
+--------------------------------------------------------------------
+
+-- >>> solve2 exampleRules2 exampleStrings2
+-- 12
 solve2 :: Rules -> [String] -> Int
-solve2 = undefined
+solve2 = solve1 . changeRules
+
+-- | Completely replace rules 8 and 11.
+--
+-- > 8: 42 | 42 8
+-- > 11: 42 31 | 42 11 31
+changeRules :: Rules -> Rules
+changeRules =
+  Map.union $
+    Map.fromList
+      [ (8, [L [42], L [42, 8]]),
+        (11, [L [42, 31], L [42, 11, 31]])
+      ]
+
+--------------------------------------------------------------------
+--                            MISC                                --
+--------------------------------------------------------------------
+
+parseOrFail :: MonadFail m => Parser a -> String -> m a
+parseOrFail p = eitherPretty . runParser (p <* eof) "Day19"
+
+eitherPretty :: MonadFail m => Either (ParseErrorBundle String Void) a -> m a
+eitherPretty = either (fail . errorBundlePretty) pure
+
+shortest :: [[a]] -> [a]
+shortest [] = error "empty sequence"
+shortest [a] = a
+shortest ([] : _) = []
+shortest (x : y : xs) = shortest $ minimumBy shorter [x, y] : xs
+
+shorter :: [a] -> [a] -> Ordering
+shorter [] [] = EQ
+shorter [] _ = LT
+shorter _ [] = GT
+shorter (_ : l) (_ : r) = shorter l r
+
+--------------------------------------------------------------------
+--                            DEBUG                               --
+--------------------------------------------------------------------
 
 example :: String
 example = concat [unlines exampleRules', "\n", unlines exampleStrings]
@@ -108,20 +159,62 @@ exampleStrings =
     "aaaabbb"
   ]
 
-parseOrFail :: MonadFail m => Parser a -> String -> m a
-parseOrFail p = eitherPretty . runParser (p <* eof) "Day19"
+example2 :: String
+example2 = concat [unlines exampleRules2', "\n", unlines exampleStrings2]
 
-eitherPretty :: MonadFail m => Either (ParseErrorBundle String Void) a -> m a
-eitherPretty = either (fail . errorBundlePretty) pure
+exampleRules2 :: Rules
+exampleRules2 = Map.fromList . fromJust $ mapM (parseOrFail parseRule) exampleRules2'
 
-shortest :: [[a]] -> [a]
-shortest [] = error "empty sequence"
-shortest [a] = a
-shortest ([] : _) = []
-shortest (x : y : xs) = shortest $ minimumBy shorter [x, y] : xs
+exampleRules2' :: [String]
+exampleRules2' =
+  [ "0: 8 11",
+    "1: \"a\"",
+    "2: 1 24 | 14 4",
+    "3: 5 14 | 16 1",
+    "4: 1 1",
+    "5: 1 14 | 15 1",
+    "6: 14 14 | 1 14",
+    "7: 14 5 | 1 21",
+    "8: 42",
+    "9: 14 27 | 1 26",
+    "10: 23 14 | 28 1",
+    "11: 42 31",
+    "12: 24 14 | 19 1",
+    "13: 14 3 | 1 12",
+    "14: \"b\"",
+    "15: 1 | 14",
+    "16: 15 1 | 14 14",
+    "17: 14 2 | 1 7",
+    "18: 15 15",
+    "19: 14 1 | 14 14",
+    "20: 14 14 | 1 15",
+    "21: 14 1 | 1 14",
+    "22: 14 14",
+    "23: 25 1 | 22 14",
+    "24: 14 1",
+    "25: 1 1 | 1 14",
+    "26: 14 22 | 1 20",
+    "27: 1 6 | 14 18",
+    "28: 16 1",
+    "31: 14 17 | 1 13",
+    "42: 9 14 | 10 1"
+  ]
 
-shorter :: [a] -> [a] -> Ordering
-shorter [] [] = EQ
-shorter [] _ = LT
-shorter _ [] = GT
-shorter (_ : l) (_ : r) = shorter l r
+exampleStrings2 :: [String]
+exampleStrings2 =
+  [ "abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa",
+    "bbabbbbaabaabba",
+    "babbbbaabbbbbabbbbbbaabaaabaaa",
+    "aaabbbbbbaaaabaababaabababbabaaabbababababaaa",
+    "bbbbbbbaaaabbbbaaabbabaaa",
+    "bbbababbbbaaaaaaaabbababaaababaabab",
+    "ababaaaaaabaaab",
+    "ababaaaaabbbaba",
+    "baabbaaaabbaaaababbaababb",
+    "abbbbabbbbaaaababbbbbbaaaababb",
+    "aaaaabbaabaaaaababaa",
+    "aaaabbaaaabbaaa",
+    "aaaabbaabbaaaaaaabbbabbbaaabbaabaaa",
+    "babaaabbbaaabaababbaabababaaab",
+    "aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba"
+  ]
