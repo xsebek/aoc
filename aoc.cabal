@@ -44,7 +44,6 @@ executable aoc2015
 
 library A2020
   exposed-modules:
-    Advent2020
     Day01
     Day02
     Day03
@@ -64,6 +63,7 @@ library A2020
     Day17
     Day18
     Day19
+    Day21
   hs-source-dirs: A2020
   -- defaults - I will try to learn them after having them :)
   -- anything that I actually use will have to be copied to exec
@@ -106,7 +106,6 @@ executable aoc2020
     bytestring, megaparsec, text,
     optics-core, criterion
   other-modules:
-    Advent2020
     Day01
     Day02
     Day03
@@ -126,6 +125,7 @@ executable aoc2020
     Day17
     Day18
     Day19
+    Day21
   default-extensions:
     -- trivial
     FlexibleContexts
@@ -160,4 +160,4 @@ executable aoc2020
     -Wincomplete-record-updates
     -Wredundant-constraints
     -Wincomplete-record-updates
-    
+
