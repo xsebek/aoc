@@ -6,14 +6,20 @@
 -- <https://adventofcode.com/2020/day/19>
 module Day19 where
 
-import Data.Bifunctor (Bifunctor (bimap))
-import Data.Function (on)
 import qualified Data.IntMap as Map
-import Data.List (minimumBy, nub, sortOn)
-import Data.Maybe (fromJust, fromMaybe, listToMaybe)
+import Data.List (minimumBy)
+import Data.Maybe (fromJust)
 import Data.Void (Void)
-import Text.Megaparsec hiding (parse)
-import Text.Megaparsec.Char (char, eol, space, space1, string)
+import Text.Megaparsec
+    ( anySingle,
+      runParser,
+      errorBundlePretty,
+      sepBy,
+      (<|>),
+      Parsec,
+      MonadParsec(eof),
+      ParseErrorBundle )
+import Text.Megaparsec.Char (char, space)
 import Text.Megaparsec.Char.Lexer (decimal)
 
 type Rules = Map.IntMap [Rule]
@@ -75,7 +81,7 @@ check rules s = shortest . (s :) $ checkRule rules (rules Map.! 0) s
 -- >>> checkRule exampleRules [L [4,1,5]] "ababbb"
 -- [""]
 checkRule :: Rules -> [Rule] -> String -> [String]
-checkRule rules rs s = case rs of
+checkRule rules rss s = case rss of
   [] -> []
   (r : rs) -> checkSub rules r s <> checkRule rules rs s
 
