@@ -7,7 +7,9 @@
 module Day22 where
 
 import Data.Bifunctor (Bifunctor (second), bimap)
-import Data.Foldable (find, Foldable (toList))
+import Data.Foldable (Foldable (toList), find)
+import Data.Function (on)
+import Data.List (inits)
 import Data.Maybe (fromJust)
 import Data.Sequence (Seq (..), (<|), (|>))
 import qualified Data.Sequence as Seq
@@ -48,24 +50,64 @@ toPlayer = uncurry P . nameCards . T.lines
 splitPlayers :: Text -> (Text, Text)
 splitPlayers = second (T.drop 2) . breakOn "\n\n"
 
-play :: (Player, Player) -> (Player, Player)
-play (p1@(P n1 (c1 :<| cs1)), p2@(P n2 (c2 :<| cs2))) = case c1 `compare` c2 of
+type RoundWin = Player -> Player -> Ordering
+
+play :: RoundWin -> (Player, Player) -> (Player, Player)
+play cmp (p1@(P n1 (c1 :<| cs1)), p2@(P n2 (c2 :<| cs2))) = case p1 `cmp` p2 of
   EQ -> (p1, p2)
   LT -> (P n1 cs1, P n2 (cs2 |> c2 |> c1))
   GT -> (P n1 (cs1 |> c1 |> c2), P n2 cs2)
-play ps = ps
+play _ ps = ps
+
+higherWins :: RoundWin
+higherWins (P _ (c1 :<| _)) (P _ (c2 :<| _)) = c1 `compare` c2
+higherWins _ _ = error "One of the players is out of cards"
+
+game :: RoundWin -> (Player, Player) -> [(Player, Player)]
+game w = iterate (play w)
+
+anyWin :: (Player, Player) -> Bool
+anyWin = uncurry (||) . both (null . cards)
+
+score :: Player -> Int
+score = sum . zipWith (*) [1 ..] . toList . Seq.reverse . cards
 
 -- >>> solve1 exampleIn
 -- 306
 solve1 :: (Player, Player) -> Int
-solve1 = winScore . fromJust . find anyWin . iterate play
+solve1 = winScore . fromJust . find anyWin . game higherWins
  where
-  anyWin = uncurry (||) . both (null . cards)
-  winScore = uncurry max . both (sum . zipWith (*) [1..] . toList . Seq.reverse . cards)
+  winScore = uncurry max . both score
+
+drawIsFirst :: [(Player, Player)] -> (Player, Player) -> Either (Int, Int) (Player, Player)
+drawIsFirst prev ps =
+  if ps `elem` prev
+    then Left (score (fst ps), 0)
+    else Right ps
+
+-- >>> take 5 $ noDraws exampleIn
+noDraws :: (Player, Player) -> [Either (Int, Int) (Player, Player)]
+noDraws ps = zipWith drawIsFirst (inits g) g
+ where
+  g = game recursiveWin ps
+
+recursiveEnd :: (Player, Player) -> (Int, Int)
+recursiveEnd = either id (both score) . fromJust . wins . noDraws
+ where
+  wins = find $ \case
+    Left _ -> True
+    Right p -> anyWin p
+
+recursiveWin :: RoundWin
+recursiveWin p1@(P n1 (c1 :<| cs1)) p2@(P n2 (c2 :<| cs2)) =
+  if c1 <= length cs1 && c2 <= length cs2
+    then uncurry compare $ recursiveEnd (P n1 (Seq.take c1 cs1), P n2 (Seq.take c2 cs2))
+    else higherWins p1 p2
+recursiveWin _ _ = error "One of the players is out of cards"
 
 -- >>> solve2 exampleIn
-solve2 :: a -> Int
-solve2 = undefined
+solve2 :: (Player, Player) -> Int
+solve2 = uncurry max . recursiveEnd
 
 both :: (a -> b) -> (a, a) -> (b, b)
 both f = bimap f f
