@@ -66,7 +66,7 @@ library A2020
     Day21
     Day22
     Day23
-    -- Day24
+    Day24
     -- Day25
   hs-source-dirs: A2020
   -- defaults - I will try to learn them after having them :)
@@ -134,7 +134,7 @@ executable aoc2020
     Day21
     Day22
     Day23
-    -- Day24
+    Day24
     -- Day25
   default-extensions:
     -- trivial
