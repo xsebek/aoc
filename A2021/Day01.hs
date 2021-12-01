@@ -1,6 +1,6 @@
 -- |
 -- Module      : Day01
--- Description : Solution to AOC 2021 Day 01: ?????
+-- Description : Solution to AOC 2021 Day 01: Sonar Sweep
 -- Maintainer  : <xsebek@fi.muni.cz>
 --
 -- <https://adventofcode.com/2021/day/01>
@@ -17,12 +17,26 @@ parse :: String -> [Int]
 parse = map read . lines
 
 -- >>> solve1 example
-solve1 :: a -> Int
-solve1 = undefined
+solve1 :: [Int] -> Int
+solve1 ms = sum . map fromEnum $ zipWith (<) ms (tail ms)
+
+slide :: [Int] -> [Int]
+slide ms = zipWith3 (\x y z -> x + y + z) ms (drop 1 ms) (drop 2 ms) 
 
 -- >>> solve2 example
-solve2 :: a -> Int
-solve2 = undefined
+solve2 :: [Int] -> Int
+solve2 = solve1 . slide
 
-example :: a
-example = undefined
+example :: [Int]
+example = 
+  [ 199
+  , 200
+  , 208
+  , 210
+  , 200
+  , 207
+  , 240
+  , 269
+  , 260
+  , 263
+  ]

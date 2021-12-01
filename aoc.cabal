@@ -172,6 +172,72 @@ executable aoc2020
     -Wincomplete-record-updates
 
 
+library A2021
+  build-depends:
+    base, containers, unordered-containers, vector,
+    bytestring, megaparsec, text,
+    -- optics-core, criterion,
+  other-modules:
+    Day01
+    -- Day02
+    -- Day03
+    -- Day04
+    -- Day05
+    -- Day06
+    -- Day07
+    -- Day08
+    -- Day09
+    -- Day10
+    -- Day11
+    -- Day12
+    -- Day13
+    -- Day14
+    -- Day15
+    -- Day16
+    -- Day17
+    -- Day18
+    -- Day19
+    -- Day20
+    -- Day21
+    -- Day22
+    -- Day23
+    -- Day24
+    -- Day25
+  default-extensions:
+    -- trivial
+    FlexibleContexts
+    FlexibleInstances
+    MultiParamTypeClasses
+    -- nice
+    BangPatterns
+    LambdaCase
+    MultiWayIf
+    NamedFieldPuns
+    RecordWildCards
+    TupleSections
+    -- derive anything
+    DeriveFoldable
+    DeriveFunctor
+    DeriveGeneric
+    DeriveLift
+    DeriveTraversable
+    DerivingStrategies
+    GeneralizedNewtypeDeriving
+    StandaloneDeriving
+    -- types
+    OverloadedStrings
+    ScopedTypeVariables
+    TypeApplications
+    TypeFamilies
+  hs-source-dirs: A2021
+  default-language: Haskell2010
+  ghc-options:
+    -O2
+    -Wall
+    -Wincomplete-record-updates
+    -Wredundant-constraints
+    -Wincomplete-record-updates
+
 executable aoc2021
   main-is: Main.hs
   build-depends:
