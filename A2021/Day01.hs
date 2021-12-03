@@ -17,13 +17,17 @@ parse :: String -> [Int]
 parse = map read . lines
 
 -- >>> solve1 example
+-- 7
 solve1 :: [Int] -> Int
 solve1 ms = sum . map fromEnum $ zipWith (<) ms (tail ms)
 
+-- >>> slide example
+-- [607,618,618,617,647,716,769,792]
 slide :: [Int] -> [Int]
 slide ms = zipWith3 (\x y z -> x + y + z) ms (drop 1 ms) (drop 2 ms) 
 
 -- >>> solve2 example
+-- 5
 solve2 :: [Int] -> Int
 solve2 = solve1 . slide
 

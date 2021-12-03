@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 module Main where
 
 import Control.Monad (forM_)
@@ -7,8 +8,8 @@ import Data.Maybe (fromMaybe)
 import System.Environment (getArgs)
 
 import Day01 (main01)
--- import Day02 (main02)
--- import Day03 (main03)
+import Day02 (main02)
+import Day03 (main03)
 -- import Day04 (main04)
 -- import Day05 (main05)
 -- import Day06 (main06)
@@ -51,8 +52,8 @@ solutionsM :: [IO ()]
 solutionsM =
   apply
     [ main01
-    , todoDay
-    , todoDay
+    , main02
+    , main03
     , todoDay
     , todoDay
     , todoDay
