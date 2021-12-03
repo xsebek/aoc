@@ -79,7 +79,7 @@ foldAim = foldl' (&) (0, mempty) . map dirToAimPos
 -- Forward 2  -> aim: 10  P {horizontal = 15, depth = 60}
 prettyAim :: [D] -> IO ()
 prettyAim ds = do
-  putStrLn $ pad "Starting" 10 <> prettyS (0, mempty :: Pos)
+  putStrLn $ pad "Starting" 10 <> prettyS (0 :: Int, mempty :: Pos)
   mapM_ pretty . zip ds . drop 1 . map foldAim $ inits ds
  where
    pretty (d, ap) = putStrLn $ padS d 10 <> prettyS ap
