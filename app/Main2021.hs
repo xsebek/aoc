@@ -10,7 +10,7 @@ import System.Environment (getArgs)
 import Day01 (main01)
 import Day02 (main02)
 import Day03 (main03)
--- import Day04 (main04)
+import Day04 (main04)
 -- import Day05 (main05)
 -- import Day06 (main06)
 -- import Day07 (main07)
@@ -54,7 +54,7 @@ solutionsM =
     [ main01
     , main02
     , main03
-    , todoDay
+    , main04
     , todoDay
     , todoDay
     , todoDay
