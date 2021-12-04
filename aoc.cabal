@@ -174,9 +174,9 @@ executable aoc2020
 
 library A2021
   build-depends:
-    base,
-    -- containers, unordered-containers, vector,
-    -- bytestring, megaparsec, text,
+    base, containers, unordered-containers,
+    array, vector,
+    bytestring, megaparsec, text,
     -- optics-core, criterion,
   exposed-modules:
     Day01
@@ -205,31 +205,31 @@ library A2021
     -- Day24
     -- Day25
   default-extensions:
-    -- -- trivial
-    -- FlexibleContexts
-    -- FlexibleInstances
-    -- MultiParamTypeClasses
-    -- -- nice
-    -- BangPatterns
-    -- LambdaCase
-    -- MultiWayIf
-    -- NamedFieldPuns
-    -- RecordWildCards
-    -- TupleSections
-    -- -- derive anything
-    -- DeriveFoldable
-    -- DeriveFunctor
-    -- DeriveGeneric
-    -- DeriveLift
-    -- DeriveTraversable
-    -- DerivingStrategies
-    -- GeneralizedNewtypeDeriving
-    -- StandaloneDeriving
-    -- -- types
-    -- OverloadedStrings
-    -- ScopedTypeVariables
-    -- TypeApplications
-    -- TypeFamilies
+    -- trivial
+    FlexibleContexts
+    FlexibleInstances
+    MultiParamTypeClasses
+    -- nice
+    BangPatterns
+    LambdaCase
+    MultiWayIf
+    NamedFieldPuns
+    RecordWildCards
+    TupleSections
+    -- derive anything
+    DeriveFoldable
+    DeriveFunctor
+    DeriveGeneric
+    DeriveLift
+    DeriveTraversable
+    DerivingStrategies
+    GeneralizedNewtypeDeriving
+    StandaloneDeriving
+    -- types
+    OverloadedStrings
+    ScopedTypeVariables
+    TypeApplications
+    TypeFamilies
   hs-source-dirs: A2021
   default-language: Haskell2010
   ghc-options:
