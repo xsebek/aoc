@@ -178,6 +178,8 @@ library A2021
     array, vector,
     bytestring, megaparsec, text,
     -- optics-core, criterion,
+  other-modules:
+    Parser
   exposed-modules:
     Day01
     Day02
