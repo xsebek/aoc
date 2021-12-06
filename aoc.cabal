@@ -175,7 +175,7 @@ executable aoc2020
 library A2021
   build-depends:
     base, containers, unordered-containers,
-    array, vector,
+    array, vector, linear,
     bytestring, megaparsec, text,
     -- optics-core, criterion,
   other-modules:
@@ -208,6 +208,7 @@ library A2021
     -- Day25
   default-extensions:
     -- trivial
+    ImportQualifiedPost
     FlexibleContexts
     FlexibleInstances
     MultiParamTypeClasses
