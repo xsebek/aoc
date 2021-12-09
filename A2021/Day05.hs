@@ -42,7 +42,7 @@ straightLine (V2 x1 y1, V2 x2 y2)
     fromTo i j = [min i j..max i j]
 
 count :: Ord a => [a] -> Map a Int
-count = foldr (flip (Map.insertWith (+)) 1) mempty
+count = Map.fromListWith (+) . flip zip (repeat 1) 
 
 pointCounter :: (Line -> Maybe [V2]) -> [Line] -> Map V2 Int
 pointCounter lToMV2 = count . concat . mapMaybe lToMV2
