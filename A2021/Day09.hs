@@ -1,14 +1,14 @@
 -- |
--- Module      : DayDAY
--- Description : Solution to AOC 2021 Day DAY: ?????
+-- Module      : Day09
+-- Description : Solution to AOC 2021 Day 09: ?????
 -- Maintainer  : <xsebek@fi.muni.cz>
 --
--- <https://adventofcode.com/2021/day/DAY>
-module DayDAY where
+-- <https://adventofcode.com/2021/day/09>
+module Day09 where
 
--- | Solution to Day DAY.
-mainDAY :: FilePath -> IO ()
-mainDAY f = do
+-- | Solution to Day 09.
+main09 :: FilePath -> IO ()
+main09 f = do
   input <- parse <$> readFile f
   print $ solve1 input
   print $ solve2 input
