@@ -1,4 +1,5 @@
 {-# LANGUAGE DerivingVia #-}
+
 -- |
 -- Module      : Day11
 -- Description : Solution to AOC 2021 Day 11: Dumbo Octopus
@@ -8,10 +9,12 @@
 module Day11 where
 
 import Data.Char (digitToInt, intToDigit)
-import Data.Foldable (foldl', find)
+import Data.Foldable (find, foldl')
 import Data.Map (Map)
 import Data.Map qualified as Map
-import Linear ( V2(..) )
+import Data.Set (Set)
+import Data.Set qualified as Set
+import Linear (V2 (..))
 
 -- | Solution to Day 11.
 main11 :: FilePath -> IO ()
@@ -22,21 +25,13 @@ main11 f = do
 
 type P2 = V2 Int
 
-data Energy = Flashed | Energy Int
- deriving (Eq,Ord,Show) 
-
-type Grid = Map P2 Energy
+type Grid = Map P2 Int
 
 parse :: String -> Grid
-parse = Map.fromList . indexYX . map (map (Energy . digitToInt)) . lines
+parse = Map.fromList . indexYX . map (map digitToInt) . lines
  where
   indexYX :: [[a]] -> [(P2, a)]
   indexYX l = [(V2 x y, a) | (y, ls) <- zip [0 ..] l, (x, a) <- zip [0 ..] ls]
-
-eToInt :: Energy -> Int
-eToInt = \case
-  Flashed -> 0
-  Energy n -> n
 
 inBound :: (P2, P2) -> P2 -> Bool
 inBound (V2 lx ly, V2 rx ry) (V2 x y) = lx <= x && x <= rx && ly <= y && y <= ry
@@ -47,24 +42,25 @@ adjancent g p = tail . filter (inBound gbounds) . map (p +) $ V2 <$> plusMinus <
   plusMinus = [0, -1, 1]
   gbounds = (V2 0 0,) . fst $ Map.findMax g
 
-octoStep :: Grid -> P2 -> Grid
-octoStep g p = if newFlash then chainG else g'
+octoStep :: (Set P2, Grid) -> P2 -> (Set P2, Grid)
+octoStep (flashed, g) p = if newFlash then chainG else (flashed, g')
  where
-  (Just e, g') = Map.updateLookupWithKey (const $ Just . octoSucc) p g
-  octoSucc = \case
-   Flashed -> Flashed 
-   Energy n -> if n >= 9 then Flashed else Energy $ succ n 
-  chainG = foldl' octoStep g' (adjancent g p)
-  newFlash = g Map.! p /= Flashed && e == Flashed
+  (Just e, g') = Map.updateLookupWithKey (\k -> Just . octoSucc k) p g
+  octoSucc k n
+    | n >= 9 = 0
+    | n == 0 = if Set.member k flashed then 0 else 1
+    | otherwise = succ n
+  chainG = foldl' octoStep (Set.insert p flashed, g') (adjancent g p)
+  newFlash = Set.notMember p flashed && e == 0
 
 singleStep :: Grid -> Grid
-singleStep g = Map.map (Energy . eToInt) $ foldl' octoStep g (Map.keys g)
+singleStep g = snd $ foldl' octoStep (mempty, g) (Map.keys g)
 
 stepCount :: (Int, Grid) -> (Int, Grid)
 stepCount (c, g) = (c + fc, sg)
  where
   sg = singleStep g
-  fc = count (Energy 0) (Map.elems sg)
+  fc = count 0 (Map.elems sg)
   count e = length . filter (== e)
 
 -- >>> solve1 example
@@ -73,23 +69,23 @@ solve1 :: Grid -> Int
 solve1 = fst . (!! 100) . iterate stepCount . (0,)
 
 indexedSteps :: Grid -> [(Int, Grid)]
-indexedSteps = zip [0..] . iterate singleStep
+indexedSteps = zip [0 ..] . iterate singleStep
 
 -- >>> solve2 example
 -- 195
 solve2 :: Grid -> Int
-solve2 = maybe 0 fst . find (all (==Energy 0) . snd) . indexedSteps
+solve2 = maybe 0 fst . find (all (== 0) . snd) . indexedSteps
 
 prettyGrid :: Grid -> IO ()
 prettyGrid g = mapM_ putStrLn cgrid
  where
   (V2 mx my) = fst $ Map.findMax g
-  cgrid = [[intToDigit . eToInt $ g Map.! V2 x y | x <- [0 .. mx]] | y <- [0 .. my]]
+  cgrid = [[intToDigit $ g Map.! V2 x y | x <- [0 .. mx]] | y <- [0 .. my]]
 
 prettySteps :: Int -> Grid -> IO ()
 prettySteps i = mapM_ prettyStep . take i . indexedSteps
-  where
-    prettyStep (j,g) = print j >> prettyGrid g
+ where
+  prettyStep (j, g) = print j >> prettyGrid g
 
 smallExample :: Grid
 smallExample =
