@@ -8,6 +8,7 @@ module Parser (
     P.option,
     P.sepBy,
     P.sepBy1,
+    P.sepEndBy,
     P.some,
     (P.<?>),
     PC.eol,
