@@ -177,6 +177,7 @@ library A2021
     base, containers, unordered-containers,
     array, vector, linear,
     bytestring, megaparsec, text,
+    search-algorithms,
     -- optics-core, criterion,
   other-modules:
     Parser
@@ -195,7 +196,7 @@ library A2021
     Day12
     Day13
     Day14
-    -- Day15
+    Day15
     -- Day16
     -- Day17
     -- Day18
