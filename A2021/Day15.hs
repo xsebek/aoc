@@ -6,7 +6,7 @@
 -- <https://adventofcode.com/2021/day/15>
 module Day15 where
 
-import Algorithm.Search (dijkstra)
+import Algorithm.Search (dijkstra, aStar)
 import Data.Char (digitToInt)
 import Data.Map (Map)
 import Data.Map qualified as Map
@@ -40,7 +40,12 @@ adjancent !g !p = filter (inBound gbounds) $ map (p +) plusMinus
   gbounds = (V2 0 0,) . fst $ Map.findMax g
 
 minimalPath :: P2 -> P2 -> Grid -> (Int, [P2])
-minimalPath start end g = fromJust $ dijkstra (adjancent g) (\_ np -> g Map.! np) (== end) start
+minimalPath start end g = fromJust $ aStar -- (state -> f state) (state -> state -> cost) (state -> cost) (state -> Bool) state
+ (adjancent g)
+ (\_ np -> g Map.! np)
+ (\v -> sum . abs $ end - v)
+ (== end)
+ start
 
 lrCorner :: Grid -> P2
 lrCorner = fst . Map.findMax
