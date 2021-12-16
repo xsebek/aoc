@@ -178,7 +178,7 @@ library A2021
     array, vector, linear,
     bytestring, megaparsec, text,
     search-algorithms,
-    -- optics-core, criterion,
+    optics, criterion,
   other-modules:
     Parser
   exposed-modules:
@@ -197,7 +197,7 @@ library A2021
     Day13
     Day14
     Day15
-    -- Day16
+    Day16
     -- Day17
     -- Day18
     -- Day19

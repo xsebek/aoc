@@ -22,7 +22,7 @@ import Day12 (main12)
 import Day13 (main13)
 import Day14 (main14)
 import Day15 (main15)
--- import Day16 (main16)
+import Day16 (main16)
 -- import Day17 (main17)
 -- import Day18 (main18)
 -- import Day19 (main19)
@@ -66,7 +66,7 @@ solutionsM =
     , main13
     , main14
     , main15
-    , todoDay
+    , main16
     , todoDay
     , todoDay
     , todoDay
