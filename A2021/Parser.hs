@@ -2,6 +2,7 @@ module Parser (
     Parser,
     parseFile,
     parseExample,
+    parseExample',
     word,
     P.endBy,
     P.hidden,
@@ -17,6 +18,7 @@ module Parser (
     PC.string,
     PC.char,
     PL.decimal,
+    PL.signed,
 ) where
 
 -- Data names
@@ -34,6 +36,13 @@ type Parser = P.Parsec Void Text
 -- | Read and parse file with error reporting in IO
 parseFile :: Parser a -> FilePath -> IO a
 parseFile p f = parsedEitherToIO . P.runParser p f =<< T.readFile f
+
+parseExample' :: Parser a -> Text -> a
+parseExample' p t = either errorPretty id $ P.runParser p "Example" t
+ where
+  errorPretty :: P.ParseErrorBundle Text Void -> b
+  errorPretty = errorWithoutStackTrace . P.errorBundlePretty
+
 
 parseExample :: Parser a -> Text -> IO a
 parseExample p t = parsedEitherToIO $ P.runParser p "Example" t
