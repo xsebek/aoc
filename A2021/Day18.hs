@@ -1,21 +1,19 @@
 -- |
 -- Module      : Day18
--- Description : Solution to AOC 2021 Day 18: ?????
+-- Description : Solution to AOC 2021 Day 18: Snailfish
 -- Maintainer  : <xsebek@fi.muni.cz>
 --
 -- <https://adventofcode.com/2021/day/18>
 module Day18 where
 
 import Control.Applicative ((<|>))
-import Data.List (foldl1', inits)
-import Data.Text (Text)
-import Data.Text qualified as T
--- import Debug.Trace (trace)
-import Optics
-import Parser
 import Data.Foldable (maximumBy)
 import Data.Function (on)
-import Data.Tuple (swap)
+import Data.List (foldl1')
+import Data.Text (Text)
+import Data.Text qualified as T
+import Optics
+import Parser
 
 -- | Solution to Day 18.
 main18 :: FilePath -> IO ()
@@ -42,7 +40,6 @@ parser = parseSnailInt `sepEndBy` eol
 -- "[[[[3,0],[5,3]],[4,4]],[5,5]]"
 -- >>> pretty . foldl1' (<>) $ exampleN 6
 -- "[[[[5,0],[7,4]],[5,5]],[6,6]]"
--- >>>
 instance Semigroup SInt where
   l <> r = reduce $ P l r
 
@@ -61,8 +58,7 @@ explode layer p = case p of
   R n -> (False, Nothing, Nothing, R n)
   P p1 p2 ->
     if layer >= 4
-      then -- tracingP "EXPLODING" (P p1 p2) $
-      case p of
+      then case p of
         -- EXPLODE PAIR
         P (R l) (R r) -> (True, Just l, Just r, R 0)
         -- EXPLODE INSIDE RIGHT
@@ -92,7 +88,7 @@ split p = case p of
   R n ->
     if n < 10
       then (False, R n)
-      else {- tracing "SPLIT" n -} (True, P (R $ n `div` 2) (R $ n `div` 2 + n `mod` 2))
+      else (True, P (R $ n `div` 2) (R $ n `div` 2 + n `mod` 2))
   P p1 p2 ->
     let (b1, s1) = split p1
         (b2, s2) = split p2
@@ -118,7 +114,7 @@ cataP f g = \case
 magnitude :: SInt -> Int
 magnitude = cataP id (\l r -> l * 3 + r * 2)
 
--- >>> solve1 <$> example2
+-- >>> solve1 example2
 -- 4140
 solve1 :: [SInt] -> Int
 solve1 = magnitude . foldl1' (<>)
@@ -126,15 +122,15 @@ solve1 = magnitude . foldl1' (<>)
 largestPairBy :: (Eq a, Ord b) => (a -> a -> b) -> [a] -> ((a, a), b)
 largestPairBy op xs = maximumBy (compare `on` snd) pairValues
  where
-  combinations2 = filter (uncurry (/=)) [(x,y) | x <- xs, y <- xs]
+  combinations2 = filter (uncurry (/=)) [(x, y) | x <- xs, y <- xs]
   pairValues = zip combinations2 $ map (uncurry op) combinations2
 
--- >>> over _1 (over both pretty) . maxAddMagnitude <$> example
+-- >>> over _1 (over both pretty) $ maxAddMagnitude example2
 -- (("[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]","[[[[2,4],7],[6,[0,5]]],[[[6,8],[2,8]],[[2,1],[4,5]]]]"),3416)
 maxAddMagnitude :: [SInt] -> ((SInt, SInt), Int)
 maxAddMagnitude = largestPairBy (\l r -> magnitude $ l <> r)
 
--- >>> solve2 <$> example2
+-- >>> solve2 example2
 -- 3993
 solve2 :: [SInt] -> Int
 solve2 = snd . maxAddMagnitude
@@ -145,17 +141,17 @@ pretty = \case
   P p1 p2 -> '[' : pretty p1 <> (',' : pretty p2) <> "]"
 
 onExamplePretty :: (SInt -> SInt) -> Text -> IO ()
-onExamplePretty f t = mapM_ (putStrLn . pretty) =<< f `onExample` t
+onExamplePretty f t = mapM_ (putStrLn . pretty) $ f `onExample` t
 
-onExample :: (SInt -> b) -> Text -> IO [b]
-onExample f t = fmap f <$> parseExample parser t
+onExample :: (SInt -> b) -> Text -> [b]
+onExample f t = f <$> parseExample' parser t
 
 exampleN :: Int -> [SInt]
 exampleN n = let xn = map R [1 .. n] in zipWith P xn xn
 
-example1 :: IO [SInt]
+example1 :: [SInt]
 example1 =
-  parseExample parser . T.unlines $
+  parseExample' parser . T.unlines $
     [ "[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]"
     , "[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]"
     , "[[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]"
@@ -168,9 +164,9 @@ example1 =
     , "[[[[4,2],2],6],[8,7]]"
     ]
 
-example2 :: IO [SInt]
+example2 :: [SInt]
 example2 =
-  parseExample parser . T.unlines $ 
+  parseExample' parser . T.unlines $
     [ "[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]"
     , "[[[5,[2,8]],4],[5,[[9,9],0]]]"
     , "[6,[[[6,2],[5,6]],[[7,6],[4,7]]]]"
@@ -182,13 +178,3 @@ example2 =
     , "[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]"
     , "[[[[5,2],5],[8,[3,7]]],[[5,[7,5]],[4,4]]]"
     ]
-  
-{-
-
-tracingP :: Show a1 => String -> Pair a1 -> a2 -> a2
-tracingP s b = trace (s <> "\n>>> " <> pretty b)
-
-tracing :: Show a1 => String -> a1 -> a2 -> a2
-tracing s b = trace (s <> "\n> " <> show b)
-
--}
