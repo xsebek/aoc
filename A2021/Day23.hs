@@ -11,21 +11,20 @@ module Day23 where
 import Algorithm.Search (dijkstraAssoc)
 import Data.Bifunctor (second)
 import Data.Char (isSpace)
+import Data.Map (Map)
+import Data.Map qualified as Map
 import Data.Maybe (mapMaybe)
 import Data.Set (Set)
 import Data.Set qualified as Set
 import Linear
 import Optics
-import Data.Array (Array, (//), (!))
-import Data.Array qualified as Array
-
 
 -- | Solution to Day 23.
 main23 :: FilePath -> IO ()
 main23 f = do
   input <- parse <$> readFile f
   --mapM_ (\i -> print i >> (case solveCheapest i example of Just (c,bs) -> print c >> mapM_ pretty bs; _ -> putStrLn "Nothing")) [1..16]
-  mapM_ (\i -> print i >> (case solveCheapest i input of Just (c, bs) -> print c >> mapM_ pretty bs; _ -> putStrLn "Nothing")) [1 .. 6]
+  mapM_ (\i -> print i >> (case solveCheapest i input of Just (c, bs) -> print c >> mapM_ pretty bs; _ -> putStrLn "Nothing")) [15 .. 20]
   print $ solve1 input
   print $ solve2 input
 
@@ -36,19 +35,17 @@ data Amphipod = A | B | C | D
 
 data SpaceF a
   = Wall
-  | Void
   | Hall a
   | Space a
   deriving (Eq, Ord, Functor, Show)
 
 type Space = SpaceF (Maybe Amphipod)
 
-type Burrow = Array P2 Space
+type Burrow = Map P2 Space
 
 parse :: String -> Burrow
-parse s = bigWall // l
+parse s = Map.fromList l
  where
-  bigWall = Array.listArray (V2 0 0, V2 13 6) (repeat Void)
   l = [(V2 x y, parseSpace c) | (y, ls) <- zip [0 ..] (lines s), (x, c) <- zip [0 ..] ls, not (isSpace c)]
   parseSpace c
     | c == '#' = Wall
@@ -72,27 +69,21 @@ paths b s p = map (p :) ps
  where
   s' = Set.insert p s
   ns = filter (`Set.notMember` s) $ neighbors p
-  pos = map fst . filter (empty . snd) $ zip ns (map (b !) ns)
+  pos = map fst . filter (empty . snd) $ zip ns (map (b Map.!) ns)
   ps = map (: []) pos <> concatMap (paths b s') pos
-
-isSHall :: Space -> Bool
-isSHall = \case Hall _ -> True; _ -> False
-
-isSSpace :: Space -> Bool
-isSSpace = \case Space _ -> True; _ -> False
 
 amphiPaths :: Burrow -> [(Amphipod, Path)]
 amphiPaths b = splits $ hpaths' <> bpaths
  where
-  pods f = mapMaybe f $ Array.assocs b
+  pods f = mapMaybe f $ Map.toList b
   hpods = pods (\case (p, Hall (Just a)) -> Just (a, p); _ -> Nothing)
   bpods = pods (\case (p, Space (Just a)) -> Just (a, p); _ -> Nothing)
   filterL c = filter (c . last)
   podPaths cond = map $ second (filterL (not . aboveBurrow) . filterL cond . paths b mempty)
-  aboveBurrow p = isSHall (b ! p) && isSSpace (b ! (p + V2 0 1))
-  hpaths = podPaths ((== Space Nothing) . (b !)) hpods
-  hpaths' = map (\(a, ps) -> (a,) $ filter (\p -> not (pathFromDone b (a, p)) && organized ! last p == Space (Just a)) ps) hpaths
-  bpaths = podPaths ((== Hall Nothing) . (b !)) bpods
+  aboveBurrow p = isSHall' p && isSSpace' (p + V2 0 1)
+  hpaths = podPaths ((== Space Nothing) . (b Map.!)) hpods
+  hpaths' = map (\(a, ps) -> (a,) $ filter (\p -> not (pathFromDone b (a, p)) && organized Map.! last p == Space (Just a)) ps) hpaths
+  bpaths = podPaths ((== Hall Nothing) . (b Map.!)) bpods
   splits = concatMap (\(a, bs) -> map (a,) bs)
 
 amphiCost :: (Amphipod, Path) -> Int
@@ -106,10 +97,13 @@ cost = \case
   D -> 1000
 
 move :: (Amphipod, Path) -> Burrow -> Burrow
-move (a, p) b = b // [swaps (last p) (Just a), swaps (head p) Nothing]
+move (a, p) b =
+  b
+    & Map.update (swaps $ Just a) (last p)
+    & Map.update (swaps Nothing) (head p)
  where
-  swaps :: P2 -> Maybe Amphipod -> (P2, Space)
-  swaps p2 m = (p2, fmap (const m) (b ! p2))
+  swaps :: Maybe Amphipod -> Space -> Maybe Space
+  swaps m = Just . fmap (const m)
 
 solveCheapest :: Int -> Burrow -> Maybe (Int, [Burrow])
 solveCheapest steps =
@@ -128,11 +122,29 @@ pathFromDone b (_a, ps) = startsInGood
  where
   start = head ps
   lower = start + V2 0 1
-  same p = b ! p == organized ! p
+  same p = b Map.! p == organized Map.! p
   startsInGood = same start && same lower
 
+halls :: Set P2
+halls = Map.keysSet $ Map.filter isSHall emptyBurrow
+
+spaces :: Set P2
+spaces = Map.keysSet $ Map.filter isSSpace emptyBurrow
+
+isSHall :: Space -> Bool
+isSHall = \case Hall _ -> True; _ -> False
+
+isSSpace :: Space -> Bool
+isSSpace = \case Space _ -> True; _ -> False
+
+isSHall' :: P2 -> Bool
+isSHall' p = Set.member p halls
+
+isSSpace' :: P2 -> Bool
+isSSpace' p = Set.member p spaces
+
 home :: Amphipod -> [P2]
-home a = map fst . filter ((== Space (Just a)) . snd) $ Array.assocs organized
+home a = Map.keys $ Map.filter (== Space (Just a)) organized
 
 homes :: [[P2]]
 homes = map home [A .. D]
@@ -143,13 +155,12 @@ pathHome (p, a) = (cost a *) . pred . minimum $ map (sum . fmap abs . subtract p
 getMinimum :: Burrow -> Int
 getMinimum b = sum $ map pathHome aps
  where
-  s2ma :: (P2, Space) -> Maybe (P2, Amphipod)
-  s2ma (p,s) = (p,) <$> case s of
-    Void -> Nothing
+  s2ma :: Space -> Maybe Amphipod
+  s2ma = \case
     Wall -> Nothing
     Hall ma -> ma
     Space ma -> ma
-  aps = mapMaybe s2ma $ Array.assocs b
+  aps = Map.toList $ Map.mapMaybe s2ma b
 
 -- >>> solve1 example
 solve1 :: a -> Int
@@ -161,7 +172,6 @@ solve2 = errorWithoutStackTrace "Part 2 not implemented"
 
 prettySpace :: Space -> Char
 prettySpace = \case
-  Void -> ' '
   Wall -> '#'
   Hall m_am -> maybe '.' (head . show) m_am
   Space m_am -> maybe '_' (head . show) m_am
@@ -170,15 +180,15 @@ pretty :: Burrow -> IO ()
 pretty b =
   mapM_
     putStrLn
-    [ [ prettySpace ms
+    [ [ maybe ' ' prettySpace ms
       | x <- [0 .. maximumD _x]
-      , let ms = b ! V2 x y
+      , let ms = Map.lookup (V2 x y) b
       ]
     | y <- [0 .. maximumD _y]
     ]
  where
   maximumD :: LensVL' P2 Int -> Int
-  maximumD d = maximum . map (view (lensVL d) . fst) $ Array.assocs b
+  maximumD d = maximum . map (view $ lensVL d) $ Map.keys b
 
 prettyPaths :: Burrow -> IO ()
 prettyPaths b = mapM_ (\ap@(a, p) -> print a >> print p >> print (amphiCost ap) >> pretty (move ap b)) $ amphiPaths b
