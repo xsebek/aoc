@@ -31,7 +31,7 @@ import Day21 (main21)
 import Day22 (main22)
 import Day23 (main23)
 import Day24 (main24)
--- import Day25 (main25)
+import Day25 (main25)
 
 main :: IO ()
 main =
@@ -75,12 +75,12 @@ solutionsM =
     , main22
     , main23
     , main24
-    , todoDay
+    , main25
     ]
  where
   apply = zipWith (&) paths
   paths = map (\day -> "input/2021/" <> day <> ".txt") days
-  todoDay = const $ putStrLn "The selected day is not yet implemented"
+  --todoDay = const $ putStrLn "The selected day is not yet implemented"
 
 -- | Day strings formatted as %02d.
 --
