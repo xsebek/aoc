@@ -178,26 +178,28 @@ zBlock (B zMod addX addY) (w, z0) = z3
     y2 = (w + addY) * x2
     z3 = z2 + y2
 
+data MinMax = Min | Max deriving (Eq, Ord, Show, Enum)
+
 -- | Execute blocks of code that have each exactly one input.
-zOnDigits :: Int -> [Block] -> [([Int], Int)]
-zOnDigits z = \case
+zOnDigits :: MinMax -> Int -> [Block] -> [([Int], Int)]
+zOnDigits mm z = \case
   [] -> [([], z)]
   (ops : opss) ->
     [ (d : n, res)
-    | d <- ds
+    | d <- case mm of { Max -> [9,8..1]; Min -> [1..9]}
     , let ns = zBlock ops (d, z)
-    , (n, res) <- zOnDigits ns opss
+    , (n, res) <- zOnDigits mm ns opss
     ]
 
 solve1 :: [Op] -> Int
-solve1 = solveMaxForStart 0
+solve1 = solveMinMaxForStart Max 0
 
--- >>> solveMaxForStart 20 inputPart
+-- >>> solveMinMaxForStart Max 20 inputPart
 -- 9
-solveMaxForStart :: Int -> [Op] -> Int
-solveMaxForStart zStart ops = maybe 0 (toI . fst) $ find ((==0) . snd) res
+solveMinMaxForStart :: MinMax -> Int -> [Op] -> Int
+solveMinMaxForStart mm zStart ops = maybe 0 (toI . fst) $ find ((==0) . snd) res
  where
-  res = zOnDigits zStart (map parseBlock $ splitOnInput ops)
+  res = zOnDigits mm zStart (map parseBlock $ splitOnInput ops)
   toI = foldl' (\b a -> b * 10 + a) 0
 
 checkZ :: Int -> ALUState -> Bool
@@ -270,9 +272,8 @@ evalsOnDigits s = \case
 -- PART 2
 -- ----------------------------------------------------------------------------
 
--- >>> solve2 example
-solve2 :: a -> Int
-solve2 = errorWithoutStackTrace "Part 2 not implemented"
+solve2 :: [Op] -> Int
+solve2 = solveMinMaxForStart Min 0
     
 -- ----------------------------------------------------------------------------
 -- EXAMPLES
