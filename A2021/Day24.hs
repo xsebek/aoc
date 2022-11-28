@@ -23,6 +23,15 @@ import Data.Ord (Down (..))
 main24 :: FilePath -> IO ()
 main24 f = do
   input <- parse <$> readFile f
+  -- If you know/guess the first few digits, this is faster:
+  -- let n = 4
+  -- let opss = splitOnInput input
+  -- let oN = concat $ take n opss
+  -- let oRest = concat $ drop n opss
+  -- let zN = (Map.! 'z') . vars $ evals (emptyState {input = [1,1,1,9]}) oN
+  -- putStrLn "9:"
+  -- let s = solveMinMaxForStart Min zN oRest
+  -- print s
   print $ solve1 input
   print $ solve2 input
 
