@@ -206,7 +206,7 @@ library A2021
     Day22
     Day23
     Day24
-    -- Day25
+    Day25
   default-extensions:
     -- trivial
     ImportQualifiedPost
