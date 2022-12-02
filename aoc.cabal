@@ -267,7 +267,7 @@ library A2022
   exposed-modules:
     Day01
     Day02
-    -- Day03
+    Day03
     -- Day04
     -- Day05
     -- Day06

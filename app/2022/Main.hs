@@ -9,7 +9,7 @@ import System.Environment (getArgs)
 
 import Day01 (main01)
 import Day02 (main02)
--- import Day03 (main03)
+import Day03 (main03)
 -- import Day04 (main04)
 -- import Day05 (main05)
 -- import Day06 (main06)
@@ -53,7 +53,7 @@ solutionsM =
   apply
     [ main01
     , main02
-    , todoDay -- main03
+    , main03
     , todoDay -- main04
     , todoDay -- main05
     , todoDay -- main06
