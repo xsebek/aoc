@@ -8,7 +8,7 @@ import Data.Maybe (fromMaybe)
 import System.Environment (getArgs)
 
 import Day01 (main01)
--- import Day02 (main02)
+import Day02 (main02)
 -- import Day03 (main03)
 -- import Day04 (main04)
 -- import Day05 (main05)
@@ -52,7 +52,7 @@ solutionsM :: [IO ()]
 solutionsM =
   apply
     [ main01
-    , todoDay -- main02
+    , main02
     , todoDay -- main03
     , todoDay -- main04
     , todoDay -- main05
