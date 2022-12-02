@@ -13,16 +13,45 @@ main02 f = do
   print $ solve1 input
   print $ solve2 input
 
-parse :: String -> [Int]
-parse = map read . lines
+parse :: String -> [(L, R)]
+parse = map (two . words) . lines
+  where
+    two [l, r] = (read l, read r) 
+    two ls = error $ "Expected two words, got: " <> show ls
+data L = A | B | C
+  deriving (Eq, Ord, Enum, Bounded, Show, Read)
+
+data R = X | Y | Z
+  deriving (Eq, Ord, Enum, Bounded, Show, Read)
 
 -- >>> solve1 example
-solve1 :: a -> Int
-solve1 = errorWithoutStackTrace "Part 1 not implemented"
+-- 15
+solve1 :: [(L, R)] -> Int
+solve1 = sum . map score
+
+-- >>> map score example
+-- [8,1,6]
+score :: (L, R) -> Int
+score lr = scoreShape + scorePlay
+ where
+  scoreShape = 1 + fromEnum (snd lr)
+  scorePlay = case play lr of
+    LT -> 0
+    EQ -> 3
+    GT -> 6
+
+-- >>> map play example
+-- [GT,LT,EQ]
+play :: (L, R) -> Ordering
+play (l, r) = compare 1 $ (fromEnum l - fromEnum r + 1) `mod` 3 
 
 -- >>> solve2 example
 solve2 :: a -> Int
 solve2 = errorWithoutStackTrace "Part 2 not implemented"
 
-example :: a
-example = undefined
+example :: [(L, R)]
+example = parse . unlines $
+  [ "A Y"
+  , "B X"
+  , "C Z"
+  ]
