@@ -292,6 +292,8 @@ library A2022
     -- Day25
   hs-source-dirs: A2022
   default-language: GHC2021
+  default-extensions:
+    LambdaCase
   ghc-options:
     -O2
     -Wall

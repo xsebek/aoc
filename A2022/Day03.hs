@@ -5,6 +5,10 @@
 --
 -- <https://adventofcode.com/2022/day/03>
 module Day03 where
+import Data.Char (ord)
+import qualified Data.Set as Set
+import Data.List (foldl1')
+import Data.List.Split (chunksOf)
 
 -- | Solution to Day 03.
 main03 :: FilePath -> IO ()
@@ -13,16 +17,49 @@ main03 f = do
   print $ solve1 input
   print $ solve2 input
 
-parse :: String -> [Int]
-parse = map read . lines
+parse :: String -> [(String, String)]
+parse = map bag . lines
+ where
+  bag s = splitAt (length s `div` 2) s
 
 -- >>> solve1 example
-solve1 :: a -> Int
-solve1 = errorWithoutStackTrace "Part 1 not implemented"
+-- 157
+solve1 :: [(String, String)] -> Int
+solve1 = sum . map (priority . getOneWrong)
+
+-- >>> map (priority . getOneWrong) example
+-- [16,38,42,22,20,19]
+priority :: Char -> Int
+priority c = ord c - oa 
+ where
+  oa = if c < 'a' then ord 'A' - 27 else ord 'a' - 1
+
+getOne :: [Char] -> Char
+getOne = \case
+  [c] -> c
+  cs -> error $ "Unexpected number of common items: " <> cs
+
+-- >>> map getOneWrong example
+-- "pLPvts"
+getOneWrong :: (String, String) -> Char
+getOneWrong (l, r) = getOne . Set.toList $ Set.fromList l `Set.intersection` Set.fromList r
 
 -- >>> solve2 example
-solve2 :: a -> Int
-solve2 = errorWithoutStackTrace "Part 2 not implemented"
+-- 70
+solve2 :: [(String, String)] -> Int
+solve2 = sum . map (priority . getOneCommon) . chunksOf 3
 
-example :: a
-example = undefined
+-- >>> map getOneCommon $ chunksOf 3 example
+-- "rZ"
+getOneCommon :: [(String, String)] -> Char
+getOneCommon = getOne . Set.toList . foldl1' Set.intersection . map (Set.fromList . uncurry (++))
+
+example :: [(String, String)]
+example = parse . unlines $
+  [ "vJrwpWtwJgWrhcsFMMfFFhFp"
+  , "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"
+  , "PmmdzqPrVvPwwTWBwg"
+  , "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn"
+  , "ttgJtRGJQctTZtZT"
+  , "CrZsJsPPZsGzwwsLwLmpwMDw"
+  ]
