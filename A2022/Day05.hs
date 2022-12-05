@@ -22,7 +22,7 @@ main05 :: FilePath -> IO ()
 main05 f = do
   input <- parse <$> T.readFile f
   putStrLn $ solve1 input
-  print $ solve2 input
+  putStrLn $ solve2 input
 
 parse :: Text -> (Stacks, [Procedure])
 parse t = case T.splitOn "\n\n" t of
@@ -64,14 +64,18 @@ solve1 (s,ps) = map head . M.elems $ List.foldl' (flip move) s ps
 -- >>> move (Move 1 2 1) (fst example)
 -- fromList [(1,"DNZ"),(2,"CM"),(3,"P")]
 move :: Procedure -> Stacks -> Stacks
-move p s = rs
+move = moveG reverse
+
+moveG :: (String -> String) -> Procedure -> Stacks -> Stacks
+moveG f p s = rs
   where
     (a, ds) = M.alterF (fmap Just . List.splitAt p.quantity . fromJust) p.from s
-    rs = M.adjust (reverse a <>) p.to ds
+    rs = M.adjust (f a <>) p.to ds
 
 -- >>> solve2 example
-solve2 :: a -> Int
-solve2 = errorWithoutStackTrace "Part 2 not implemented"
+-- "MCD"
+solve2 :: (Stacks, [Procedure]) -> String
+solve2 (s,ps) = map head . M.elems $ List.foldl' (flip $ moveG id) s ps
 
 -- >>> fst example
 -- fromList [(1,"NZ"),(2,"DCM"),(3,"P")]
