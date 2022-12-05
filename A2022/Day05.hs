@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-
+{-# LANGUAGE OverloadedRecordDot #-}
 -- |
 -- Module      : Day05
 -- Description : Solution to AOC 2022 Day 05: Supply Stacks
@@ -10,16 +10,18 @@ module Day05 where
 
 import Data.List qualified as List
 import Data.List.Split (chunksOf)
-import Data.Maybe (catMaybes)
+import Data.Maybe (catMaybes, fromJust)
 import Data.Text (Text)
 import Data.Text qualified as T
 import Data.Text.IO qualified as T
+import qualified Data.IntMap.Lazy as M
+import Data.IntMap (IntMap)
 
 -- | Solution to Day 05.
 main05 :: FilePath -> IO ()
 main05 f = do
   input <- parse <$> T.readFile f
-  print $ solve1 input
+  putStrLn $ solve1 input
   print $ solve2 input
 
 parse :: Text -> (Stacks, [Procedure])
@@ -31,10 +33,10 @@ parse t = case T.splitOn "\n\n" t of
   _ts -> error "Unexpected number of empty line separated parts!"
 
 -- | Stacks of crates ordered left to right, top to bottom.
-type Stacks = [[Char]]
+type Stacks = IntMap [Char]
 
 parseStacks :: String -> Stacks
-parseStacks t = map catMaybes $ List.transpose cs
+parseStacks t = M.fromList . zip [1..] . map catMaybes $ List.transpose cs
  where
   cs = map (map s2c . chunksOf 4) rl
   rl = init $ lines t
@@ -55,13 +57,26 @@ parseProcedure p = case words p of
   other -> error $ "Could not parse procedure: " <> show other
 
 -- >>> solve1 example
-solve1 :: a -> Int
-solve1 = errorWithoutStackTrace "Part 1 not implemented"
+-- "CMZ"
+solve1 :: (Stacks, [Procedure]) -> String
+solve1 (s,ps) = map head . M.elems $ List.foldl' (flip move) s ps
+
+-- >>> move (Move 1 2 1) (fst example)
+-- fromList [(1,"DNZ"),(2,"CM"),(3,"P")]
+move :: Procedure -> Stacks -> Stacks
+move p s = rs
+  where
+    (a, ds) = M.alterF (fmap Just . List.splitAt p.quantity . fromJust) p.from s
+    rs = M.adjust (reverse a <>) p.to ds
 
 -- >>> solve2 example
 solve2 :: a -> Int
 solve2 = errorWithoutStackTrace "Part 2 not implemented"
 
+-- >>> fst example
+-- fromList [(1,"NZ"),(2,"DCM"),(3,"P")]
+-- >>> head $ snd example
+-- Move {quantity = 1, from = 2, to = 1}
 example :: (Stacks, [Procedure])
 example =
   parse . T.unlines $
