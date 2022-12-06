@@ -5,24 +5,33 @@
 --
 -- <https://adventofcode.com/2022/day/06>
 module Day06 where
+import qualified Data.List as List
 
 -- | Solution to Day 06.
 main06 :: FilePath -> IO ()
 main06 f = do
-  input <- parse <$> readFile f
+  input <- readFile f
   print $ solve1 input
   print $ solve2 input
 
-parse :: String -> [Int]
-parse = map read . lines
-
 -- >>> solve1 example
-solve1 :: a -> Int
-solve1 = errorWithoutStackTrace "Part 1 not implemented"
+-- 7
+solve1 :: String -> Int
+solve1 = untilMarkerEnd 4 
+
+untilMarkerEnd :: Int -> String -> Int
+untilMarkerEnd n zs = 
+  let zN = take n zs
+  in if length zN /= n then error "No marker found"
+    else if length (uniq zN) == n then n else 1 + untilMarkerEnd n (tail zs)
+
+uniq :: [Char] -> [Char]
+uniq = map head . List.group . List.sort
 
 -- >>> solve2 example
-solve2 :: a -> Int
-solve2 = errorWithoutStackTrace "Part 2 not implemented"
+-- 19
+solve2 :: String -> Int
+solve2 = untilMarkerEnd 14
 
-example :: a
-example = undefined
+example :: String
+example = "mjqjpqmgbljsphdztnvjfqwrcgsmlb"
