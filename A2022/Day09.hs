@@ -6,13 +6,16 @@
 -- <https://adventofcode.com/2022/day/09>
 module Day09 where
 
+import Data.Char (chr, ord)
+import Data.Foldable (toList)
 import Data.Function ((&))
 import Data.List qualified as List
+import Data.Sequence (Seq)
+import Data.Sequence qualified as Seq
 import Data.Set (Set)
 import Data.Set qualified as Set
 import Linear (V2 (..), _x, _y)
-import Optics (lensVL, view, (%~))
-import Optics.Lens (Lens')
+import Optics (Lens', lensVL, view, (%~), (<|))
 
 -- | Solution to Day 09.
 main09 :: FilePath -> IO ()
@@ -25,7 +28,7 @@ parse :: String -> [Move]
 parse = map (read . ("M " ++)) . lines
 
 data Move = M Dir Int
- deriving (Eq, Show, Read)
+  deriving (Eq, Show, Read)
 
 data Dir
   = R
@@ -37,7 +40,7 @@ data Dir
 -- >>> solve1 example
 -- 13
 solve1 :: [Move] -> Int
-solve1 = Set.size . visited . List.foldl' move emptyS
+solve1 = Set.size . visited . List.foldl' move (emptyS 2)
 
 type P = V2 Int
 
@@ -47,11 +50,14 @@ x = lensVL _x
 y :: Lens' P Int
 y = lensVL _y
 
-data S = S {ropeHead :: P, ropeTail :: P, visited :: Set P}
+data S = S {rope :: Seq P, visited :: Set P}
   deriving (Eq, Show)
 
-emptyS :: S
-emptyS = S 0 0 (Set.singleton 0)
+ropeHead :: Seq P -> P
+ropeHead = flip Seq.index 1
+
+emptyS :: Int -> S
+emptyS l = S (Seq.fromList $ replicate l 0) (Set.singleton 0)
 
 move :: S -> Move -> S
 move s = List.foldl' microMove s . discrete1Moves
@@ -60,20 +66,30 @@ discrete1Moves :: Move -> [Dir]
 discrete1Moves (M d m) = replicate m d
 
 microMove :: S -> Dir -> S
-microMove (S h t@(V2 tx ty) v) m = S nh nt (Set.insert nt v)
-  where
-  nh@(V2 nhx nhy) =
+microMove (S r v) m = S nr (Set.insert nt v)
+ where
+  (h, ts) = case Seq.viewl r of
+    Seq.EmptyL -> error "Can not move nonexistent rope!"
+    (h' Seq.:< ts') -> (h', toList ts')
+  nh =
     h & case m of
       R -> x %~ succ
       L -> x %~ pred
       U -> y %~ succ
       D -> y %~ pred
-  nt
-    | t `isTouching` nh = t
-    | ty == nhy = t & x %~ (dtx +)
-    | tx == nhx = t & y %~ (dty +)
-    | otherwise = t + dt
-  dt@(V2 dtx dty) = diffSign t nh
+  nr = nh <| follow nh ts
+  nt = case Seq.viewr nr of
+    Seq.EmptyR -> error "impossible - rope has at least its head"
+    (_rs Seq.:> nt') -> nt'
+  follow _i [] = Seq.empty
+  follow i@(V2 ix iy) (j@(V2 jx jy) : js) = nj <| follow nj js
+   where
+    nj
+      | j `isTouching` i = j
+      | jy == iy = j & x %~ (djx +)
+      | jx == ix = j & y %~ (djy +)
+      | otherwise = j + dj
+    dj@(V2 djx djy) = diffSign j i
 
 isTouching :: P -> P -> Bool
 isTouching (V2 x1 y1) (V2 x2 y2) = abs (x1 - x2) <= 1 && abs (y1 - y2) <= 1
@@ -89,24 +105,26 @@ diffSign :: P -> P -> P
 diffSign (V2 x1 y1) (V2 x2 y2) = V2 (signum $ x2 - x1) (signum $ y2 - y1)
 
 -- >>> solve2 example
-solve2 :: a -> Int
-solve2 = errorWithoutStackTrace "Part 2 not implemented"
+solve2 :: [Move] -> Int
+solve2 = Set.size . visited . List.foldl' move (emptyS 10)
 
--- >>> error . ("This is fine.\n" <>) . draw $ List.foldl' move emptyS example
+-- >>> error . ("This is fine.\n" <>) . draw $ List.foldl' move (emptyS 2) example
 -- *** Exception: This is fine.
 -- ..##.
 -- ...##
--- .TH##
+-- .H0##
 -- ....#
 -- ####.
 draw :: S -> String
-draw (S h t v) = unlines [[drawC (V2 px py) | px <- [minX .. maxX]] | py <- reverse [minY .. maxY]]
+draw (S r v) = unlines [[drawC (V2 px py) | px <- [minX .. maxX]] | py <- reverse [minY .. maxY]]
  where
-  drawC p
-    | p == h = 'H'
-    | p == t = 'T'
-    | p `Set.member` v = '#'
-    | otherwise = '.'
+  h = ropeHead r
+  drawC p =
+    if p == h
+      then 'H'
+      else case p `Seq.elemIndexL` r of
+        Just i -> chr (ord '0' + i)
+        Nothing -> if p `Set.member` v then '#' else '.'
   xs = Set.map (view x) (Set.insert h v)
   ys = Set.map (view y) (Set.insert h v)
   (minX, maxX) = (Set.findMin xs, Set.findMax xs)
@@ -126,3 +144,37 @@ example =
     , "L 5"
     , "R 2"
     ]
+
+-- >>> error . ("This is fine.\n" <>) . draw $ List.foldl' move (emptyS 10) exampleLarge
+-- *** Exception: This is fine.
+-- H.....................
+-- 2.....................
+-- 3.....................
+-- 4.....................
+-- 5.....................
+-- 6.....................
+-- 7.....................
+-- 8.....................
+-- 9.....................
+-- #.............###.....
+-- #............#...#....
+-- .#..........#.....#...
+-- ..#..........#.....#..
+-- ...#........#.......#.
+-- ....#......#.........#
+-- .....#..............#.
+-- ......#............#..
+-- .......#..........#...
+-- ........#........#....
+-- .........########.....
+exampleLarge :: [Move]
+exampleLarge =
+  [ M R 5
+  , M U 8
+  , M L 8
+  , M D 3
+  , M R 17
+  , M D 10
+  , M L 25
+  , M U 20
+  ]
