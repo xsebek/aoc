@@ -261,7 +261,7 @@ library A2022
     base, containers, unordered-containers,
     array, vector, linear,
     bytestring, megaparsec, text, split,
-    search-algorithms,
+    search-algorithms, optics
   other-modules:
     Parser
   exposed-modules:
