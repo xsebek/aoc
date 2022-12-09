@@ -1,6 +1,6 @@
 -- |
 -- Module      : Day06
--- Description : Solution to AOC 2022 Day 06: ?????
+-- Description : Solution to AOC 2022 Day 06: Tuning Trouble
 -- Maintainer  : <xsebek@fi.muni.cz>
 --
 -- <https://adventofcode.com/2022/day/06>

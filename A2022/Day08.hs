@@ -1,6 +1,6 @@
 -- |
 -- Module      : Day08
--- Description : Solution to AOC 2022 Day 08: ?????
+-- Description : Solution to AOC 2022 Day 08: Treetop Tree House
 -- Maintainer  : <xsebek@fi.muni.cz>
 --
 -- <https://adventofcode.com/2022/day/08>

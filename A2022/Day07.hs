@@ -2,7 +2,7 @@
 
 -- |
 -- Module      : Day07
--- Description : Solution to AOC 2022 Day 07: ?????
+-- Description : Solution to AOC 2022 Day 07: No Space Left On Device
 -- Maintainer  : <xsebek@fi.muni.cz>
 --
 -- <https://adventofcode.com/2022/day/07>

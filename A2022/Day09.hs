@@ -1,6 +1,6 @@
 -- |
 -- Module      : Day09
--- Description : Solution to AOC 2022 Day 09: ?????
+-- Description : Solution to AOC 2022 Day 09: Rope Bridge
 -- Maintainer  : <xsebek@fi.muni.cz>
 --
 -- <https://adventofcode.com/2022/day/09>
