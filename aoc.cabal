@@ -264,6 +264,7 @@ library A2022
     search-algorithms, optics
   other-modules:
     Parser
+    Grid
   exposed-modules:
     Day01
     Day02
