@@ -5,6 +5,9 @@ set +x
 YEAR=$(date '+%Y')
 DAY=$(date '+%d')
 
+YEAR="${1:-$YEAR}"
+DAY="${2:-$DAY}"
+
 cp "A${YEAR}/DayDAY.hs" "A${YEAR}/Day${DAY}.hs"
 
 sed -i "s/DAY/${DAY}/g" "A${YEAR}/Day${DAY}.hs"
