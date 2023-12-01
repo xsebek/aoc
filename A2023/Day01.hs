@@ -1,6 +1,6 @@
 -- |
 -- Module      : Day01
--- Description : Solution to AOC 2023 Day 01: ?????
+-- Description : Solution to AOC 2023 Day 01: Trebuchet?!
 -- Maintainer  : <xsebek@fi.muni.cz>
 --
 -- <https://adventofcode.com/2023/day/01>
