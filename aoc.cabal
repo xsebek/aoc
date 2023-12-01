@@ -11,7 +11,19 @@ maintainer:          xsebek@fi.muni.cz
 build-type:          Simple
 extra-source-files:  README.md
 
+common myHaskell202X
+  default-language: GHC2021
+  default-extensions: LambdaCase, RecordWildCards
+  ghc-options:
+    -O2
+    -Wall
+    -Wno-x-partial
+    -Wincomplete-record-updates
+    -Wredundant-constraints
+    -Wincomplete-record-updates
+
 library A2015
+  import: myHaskell202X
   exposed-modules:
     Day01
     Day02
@@ -22,10 +34,9 @@ library A2015
     Solution
   hs-source-dirs: A2015
   build-depends: base, containers, bytestring, pureMD5
-  default-extensions: LambdaCase, RecordWildCards
-  default-language: Haskell2010
 
 executable aoc2015
+  import: myHaskell202X
   main-is: Main.hs
   other-modules:
     Day01
@@ -36,11 +47,12 @@ executable aoc2015
     Day06
     Solution
   build-depends: base, containers, bytestring, pureMD5, A2015
-  default-extensions: OverloadedStrings, LambdaCase, RecordWildCards
+  default-extensions: OverloadedStrings, RecordWildCards
   hs-source-dirs: A2015
-  default-language: Haskell2010
+
 
 library A2020
+  import: myHaskell202X
   exposed-modules:
     Parser
     Day01
@@ -69,41 +81,14 @@ library A2020
     Day24
     Day25
   hs-source-dirs: A2020
-  -- defaults - I will try to learn them after having them :)
-  -- anything that I actually use will have to be copied to exec
-  default-extensions:
-    -- trivial
-    FlexibleContexts
-    FlexibleInstances
-    MultiParamTypeClasses
-    -- nice
-    BangPatterns
-    LambdaCase
-    MultiWayIf
-    NamedFieldPuns
-    RecordWildCards
-    TupleSections
-    -- derive anything
-    DeriveFoldable
-    DeriveFunctor
-    DeriveGeneric
-    DeriveLift
-    DeriveTraversable
-    DerivingStrategies
-    GeneralizedNewtypeDeriving
-    StandaloneDeriving
-    -- types
-    OverloadedStrings
-    ScopedTypeVariables
-    TypeApplications
-    TypeFamilies
+  default-extensions: OverloadedStrings
   build-depends:
     base, containers, unordered-containers, vector,
     bytestring, megaparsec, text,
     optics-core, criterion
-  default-language: Haskell2010
 
 executable aoc2020
+  import: myHaskell202X
   main-is: Main.hs
   build-depends:
     base, containers, unordered-containers, vector,
@@ -136,43 +121,11 @@ executable aoc2020
     Day23
     Day24
     Day25
-  default-extensions:
-    -- trivial
-    FlexibleContexts
-    FlexibleInstances
-    MultiParamTypeClasses
-    -- nice
-    BangPatterns
-    LambdaCase
-    MultiWayIf
-    NamedFieldPuns
-    RecordWildCards
-    TupleSections
-    -- derive anything
-    DeriveFoldable
-    DeriveFunctor
-    DeriveGeneric
-    DeriveLift
-    DeriveTraversable
-    DerivingStrategies
-    GeneralizedNewtypeDeriving
-    StandaloneDeriving
-    -- types
-    OverloadedStrings
-    ScopedTypeVariables
-    TypeApplications
-    TypeFamilies
   hs-source-dirs: A2020
-  default-language: Haskell2010
-  ghc-options:
-    -O2
-    -Wall
-    -Wincomplete-record-updates
-    -Wredundant-constraints
-    -Wincomplete-record-updates
-
+  default-extensions: OverloadedStrings, TypeFamilies
 
 library A2021
+  import: myHaskell202X
   build-depends:
     base, containers, unordered-containers,
     array, vector, linear,
@@ -207,56 +160,19 @@ library A2021
     Day23
     Day24
     Day25
-  default-extensions:
-    -- trivial
-    ImportQualifiedPost
-    FlexibleContexts
-    FlexibleInstances
-    MultiParamTypeClasses
-    -- nice
-    BangPatterns
-    LambdaCase
-    MultiWayIf
-    NamedFieldPuns
-    RecordWildCards
-    TupleSections
-    -- derive anything
-    DeriveFoldable
-    DeriveFunctor
-    DeriveGeneric
-    DeriveLift
-    DeriveTraversable
-    DerivingStrategies
-    GeneralizedNewtypeDeriving
-    StandaloneDeriving
-    -- types
-    OverloadedStrings
-    ScopedTypeVariables
-    TypeApplications
-    TypeFamilies
   hs-source-dirs: A2021
-  default-language: Haskell2010
-  ghc-options:
-    -O2
-    -Wall
-    -Wincomplete-record-updates
-    -Wredundant-constraints
-    -Wincomplete-record-updates
+  default-extensions: OverloadedStrings, TypeFamilies
 
 executable aoc2021
+  import: myHaskell202X
   main-is: Main.hs
   build-depends:
     base, A2021
   hs-source-dirs: app/2021
-  default-language: Haskell2010
-  ghc-options:
-    -O2
-    -Wall
-    -Wincomplete-record-updates
-    -Wredundant-constraints
-    -Wincomplete-record-updates
+  default-extensions: OverloadedStrings, TypeFamilies
 
 library A2022
+  import: myHaskell202X
   build-depends:
     base, containers, unordered-containers,
     array, vector, linear,
@@ -292,30 +208,17 @@ library A2022
     -- Day24
     -- Day25
   hs-source-dirs: A2022
-  default-language: GHC2021
-  default-extensions:
-    LambdaCase
-  ghc-options:
-    -O2
-    -Wall
-    -Wincomplete-record-updates
-    -Wredundant-constraints
-    -Wincomplete-record-updates
 
 executable aoc2022
+  import: myHaskell202X
   main-is: Main.hs
   build-depends:
     base, A2022
   hs-source-dirs: app/2022
-  default-language: GHC2021
-  ghc-options:
-    -O2
-    -Wall
-    -Wincomplete-record-updates
-    -Wredundant-constraints
-    -Wincomplete-record-updates
+
 
 library A2023
+  import: myHaskell202X
   build-depends:
     base, containers,
     -- unordered-containers,
@@ -351,26 +254,12 @@ library A2023
     -- Day24
     -- Day25
   hs-source-dirs: A2023
-  default-language: GHC2021
-  default-extensions:
-    LambdaCase
-  ghc-options:
-    -O2
-    -Wall
-    -Wincomplete-record-updates
-    -Wredundant-constraints
-    -Wincomplete-record-updates
 
 executable aoc2023
+  import: myHaskell202X
   main-is: Main.hs
   build-depends:
     base, A2023
   hs-source-dirs: app/2023
-  default-language: Haskell2010
-  ghc-options:
-    -O2
-    -Wall
-    -Wincomplete-record-updates
-    -Wredundant-constraints
-    -Wincomplete-record-updates
+
 
